@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ANU COMP3130 GROUP RESEARCH PROJECT:
 
 AI agent for playing 4x4x4 Tic Tac Toe, written in
@@ -32,9 +31,3 @@ Tentative titles for agent:
 -- FourCubed
 -- 64
 -- That's enough for now I guess
-=======
-Solver for 4x4x4 Noughts and Crosses
-
-A project undertaken at the ANU for COMP3130 in 2012
-
->>>>>>> a85c930b851306a4a07a8024a0dd496d5d8b24af
