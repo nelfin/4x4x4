@@ -6,9 +6,9 @@ VPython/C utilising Minimax search + Alpha Beta pruning.
 CONTRIBUTORS:
 
 Andrew Haigh
--- Uni ID:
--- Email:
--- Phone:
+-- Uni ID: u4667010
+-- Email:  nelfin@gmail.com
+-- Phone:  0449093631
 
 Tim Cosgrove 
 -- Uni ID: u4843619
@@ -23,10 +23,12 @@ Joshua Nelson
 Tentative titles for agent:
 -- Greg -Josh votes
 -- Foursome -Josh votes
--- FourSkin
+  + Andrew
+-- FourSkin # probably inappropriate
 -- Ticker
 -- Snickit
 -- Rampart
+  + Andrew
 -- 4^3
 -- FourCubed 
 -- 64
