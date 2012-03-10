@@ -5,12 +5,18 @@ ANYONE
 -- Make the visualiser / worker repeatedly read and write on a loop, so we can routinely ask and receive for game states
 -- Actually add some AI maybe...
 
+EVERYONE
+-- Decide on a game state format (3D array probably sufficient...)
+
 TIM
--- Test out git (if you can see this, this is done)
+-- Write some state functions (requires format decision)
+   -- [state] get_successors(state, player)
+   -- player  check_victory(state)
+DONE-- Test out git (if you can see this, this is done) 
 
 JOSH
 -- You too
--- Add Deets to README _/ (that's a tick)
+-- Add Deets to README _/ (that's a tick)  (better tick)
 
 ANDREW
 -- Chill out
