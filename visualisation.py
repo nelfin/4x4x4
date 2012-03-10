@@ -2,17 +2,15 @@
 from visual import *
 import subprocess
 import sys
+import time
 
 FPS = 60
+
 DATA_EMPTY='e'
 DATA_NOUGHT='x'
 DATA_CROSS='o'
 
-board_data = list()
-board_models = list()
 
-grid_visible = True
-dots_visible = False
 
 #Drawing constants
 GRID_COLOR = color.white
@@ -21,7 +19,7 @@ CROSSES_COLOR = color.red
 DOT_COLOR = color.white
 
 BOARD_DIMENSION = 4
-GAP_SIZE   = 10
+GAP_SIZE = 10
 BOARD_SIZE = GAP_SIZE * BOARD_DIMENSION
 THICKNESSS = 0.25
 NOUGHTS_RADIUS = GAP_SIZE/3.0
@@ -29,6 +27,20 @@ NOUGHTS_RADIUS = GAP_SIZE/3.0
 CROSSES_SIZE = (GAP_SIZE,1,1)
 CENTRE_OFFSET = vector(GAP_SIZE/2.0,GAP_SIZE/2.0,GAP_SIZE/2.0) - vector(BOARD_SIZE/2.0,BOARD_SIZE/2.0,BOARD_SIZE/2.0)
 
+#Start the worker
+worker = subprocess.Popen(['./worker'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+
+board_data = list()
+board_models = list()
+
+grid_visible = True
+dots_visible = False
+
+#Sends the worker a message and waits for it's reply
+def send_worker_message(message):
+	worker.stdin.write(serialize_board(board_data)+"\n")
+	worker_output = worker.stdout.read(BOARD_DIMENSION ** 3)
+	return worker_output
 
 #Draw a sphere for the noughts player.
 def make_nought(pos, color=NOUGHTS_COLOR, radius=NOUGHTS_RADIUS):
@@ -56,6 +68,7 @@ def serialize_board(data):
 def coords_to_index(x,y,z):
 	return z+y*(BOARD_DIMENSION)+x*(BOARD_DIMENSION*BOARD_DIMENSION)
 
+#Refreshes model list to reflect board_data
 def update_models(data):
 	for x in range(0,BOARD_DIMENSION):
 		for y in range(0,BOARD_DIMENSION):
@@ -76,26 +89,7 @@ def update_models(data):
 				
 	return
 
-#Removed the grid as it made the whole thing a lot more confusing. Could be commented in if desired
-#The borders of the grid
-#for z in range (1,4):
-#	curve(pos=[(0.5,-0.5,z-0.5),(0.5,3.5,z-0.5)])
-#	curve(pos=[(1.5,-0.5,z-0.5),(1.5,3.5,z-0.5)])
-#	curve(pos=[(2.5,-0.5,z-0.5),(2.5,3.5,z-0.5)])
 	
-#for y in range (0,3):
-#	curve(pos=[(0.5,y+0.5,-0.5),(0.5,y+0.5,4-0.5)])
-#	curve(pos=[(1.5,y+0.5,-0.5),(1.5,y+0.5,4-0.5)])
-#	curve(pos=[(2.5,y+0.5,-0.5),(2.5,y+0.5,4-0.5)])
-
-#The alternative - four sqaures defining levels
-#curve(pos=[(0,0,0),(0,0,3),(3,0,3),(3,0,0),(0,0,0)])
-#curve(pos=[(0,1,0),(0,1,3),(3,1,3),(3,1,0),(0,1,0)])
-#curve(pos=[(0,2,0),(0,2,3),(3,2,3),(3,2,0),(0,2,0)])
-#curve(pos=[(0,3,0),(0,3,3),(3,3,3),(3,3,0),(0,3,0)])
-
-#Draw the board (shutup, it's a draft ok)
-
 #Draw the grid
 grid = frame()
 (lambda spacing:(
@@ -110,8 +104,7 @@ for level in range(0,BOARD_DIMENSION):
 	y = level * GAP_SIZE
 	curve(frame=squares,pos=[(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0),(BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0),(BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,BOARD_SIZE/2.0),(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,BOARD_SIZE/2.0),(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0)])
 
-
-squares.visible = False
+squares.visible = dots_visible; #only showing the squares with the dots
 
 
 
@@ -123,33 +116,29 @@ for x in range(0,BOARD_DIMENSION):
 			board_models.append( make_dot(pos=(x,y,z)) )
 			
 
-#Start the worker
-worker = subprocess.Popen(['./worker'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
-#Send worker the empty board
-
-#Testing the communication
-worker.stdin.write(serialize_board(board_data)+"\n")
-worker_output = worker.stdout.read(64)
-print "Python read board state:",worker_output
-
-board_data = list(worker_output)
-update_models(board_data)
-
-
 
 #The main loop
 while True:
-	if scene.kb.keys:
-		s = scene.kb.getkey()
-		if s=="g":
-			grid_visible = not grid_visible
-			dots_visible = not dots_visible
-			
-			grid.visible = grid_visible
-			squares.visible = dots_visible	
-			update_models(board_data);
+	try:
+		#Keyboard interaction
+		if scene.kb.keys:
+			s = scene.kb.getkey()
+			if s=="g":
+				grid_visible = not grid_visible
+				dots_visible = not dots_visible
+		
+				grid.visible = grid_visible
+				squares.visible = dots_visible	
+				update_models(board_data);
+
+		rate(FPS);
 	
-	rate(FPS);
+		#Input loop
+		reply = send_worker_message(serialize_board(board_data))
+		print "Visualieser read board state:",reply," from worker"
 
-
-
+		board_data = list(reply)
+		update_models(board_data)
+	except KeyboardInterrupt:
+		worker.kill()
+		break
