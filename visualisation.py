@@ -3,14 +3,47 @@ from visual import *
 import subprocess
 import sys
 
-board_dimension = 4;
 
-data_empty='e';
-data_naught='x';
-data_cross='o';
+DATA_EMPTY='e';
+DATA_NAUGHT='x';
+DATA_CROSS='o';
 
 board_data = list();
 board_models = list();
+
+#Drawing constants
+GRID_COLOR = color.white;
+NAUGHTS_COLOR = color.green;
+CROSSES_COLOR = color.red;
+DOT_COLOR = color.white;
+DOTS_VISIBLE = False;
+BOARD_DIMENSION = 4;
+GAP_SIZE   = 10;
+BOARD_SIZE = GAP_SIZE * BOARD_DIMENSION;
+THICKNESSS = 0.25;
+NAUGHTS_RADIUS = GAP_SIZE/3.0;
+
+CROSSES_SIZE = (GAP_SIZE,1,1);
+CENTRE_OFFSET = vector(GAP_SIZE/2.0,GAP_SIZE/2.0,GAP_SIZE/2.0) - vector(BOARD_SIZE/2.0,BOARD_SIZE/2.0,BOARD_SIZE/2.0);
+
+
+#Draw a sphere for the naughts player.
+def make_naught(pos, color=NAUGHTS_COLOR, radius=NAUGHTS_RADIUS):
+	naught = sphere(pos=vector(pos)*GAP_SIZE+CENTRE_OFFSET, color=color, radius=radius);
+	return naught;
+
+#Draw a dot for an empty space.
+def make_dot(pos, color=DOT_COLOR, radius=NAUGHTS_RADIUS/10.0):
+	dot = make_naught(pos,color,radius);
+	dot.visible = DOTS_VISIBLE;
+	return dot;
+
+#Draw an X for the crosses player.
+def make_cross(pos, color=CROSSES_COLOR, size=CROSSES_SIZE):
+	cross = frame();
+	box(frame=cross,pos=vector(pos)*GAP_SIZE+CENTRE_OFFSET, axis=(1,1,1), color=color, size=size);
+	box(frame=cross,pos=vector(pos)*GAP_SIZE+CENTRE_OFFSET, axis=(-1,1,-1), color=color, size=size);
+	return cross;
 
 #A function that combines the list into one big string we can send to the worker
 def serialize_board(data):
@@ -18,12 +51,12 @@ def serialize_board(data):
 
 #Translates a board x y z coordinate into an index for our lists
 def coords_to_index(x,y,z):
-	return z+y*(board_dimension)+x*(board_dimension*board_dimension);
-	
+	return z+y*(BOARD_DIMENSION)+x*(BOARD_DIMENSION*BOARD_DIMENSION);
+
 def update_models(data):
-	for x in range(0,board_dimension):
-		for y in range(0,board_dimension):
-			for z in range(0,board_dimension):
+	for x in range(0,BOARD_DIMENSION):
+		for y in range(0,BOARD_DIMENSION):
+			for z in range(0,BOARD_DIMENSION):
 				state = data[coords_to_index(x,y,z)];
 				
 				#remove the old model
@@ -31,11 +64,11 @@ def update_models(data):
 				del board_models[coords_to_index(x,y,z)];
 				
 				if	 state=='e' :
-					board_models.insert(coords_to_index(x,y,z), sphere 	(pos=(x,y,z), radius=0.02, color=color.white));
+					board_models.insert(coords_to_index(x,y,z), make_dot(pos=(x,y,z)) );
 				elif state=='x' :
-					board_models.insert(coords_to_index(x,y,z), curve 	(pos=[(x,y,z),(x-0.4,y,z-0.4),(x+0.4,y,z+0.4),(x,y,z),(x-0.4,y,z+0.4),(x+0.4,y,z-0.4)], color=color.green));
+					board_models.insert(coords_to_index(x,y,z), make_cross(pos=(x,y,z)) );
 				elif state=='o' :
-					board_models.insert(coords_to_index(x,y,z), ring	(pos=(x,y,z), axis=(0,1,0), radius=0.4, thickness=0.03, color=color.red));
+					board_models.insert(coords_to_index(x,y,z), make_naught(pos=(x,y,z)) );
 				
 				
 	return;
@@ -53,31 +86,42 @@ def update_models(data):
 #	curve(pos=[(2.5,y+0.5,-0.5),(2.5,y+0.5,4-0.5)]);
 
 #The alternative - four sqaures defining levels
-curve(pos=[(0,0,0),(0,0,3),(3,0,3),(3,0,0),(0,0,0)]);
-curve(pos=[(0,1,0),(0,1,3),(3,1,3),(3,1,0),(0,1,0)]);
-curve(pos=[(0,2,0),(0,2,3),(3,2,3),(3,2,0),(0,2,0)]);
-curve(pos=[(0,3,0),(0,3,3),(3,3,3),(3,3,0),(0,3,0)]);
+#curve(pos=[(0,0,0),(0,0,3),(3,0,3),(3,0,0),(0,0,0)]);
+#curve(pos=[(0,1,0),(0,1,3),(3,1,3),(3,1,0),(0,1,0)]);
+#curve(pos=[(0,2,0),(0,2,3),(3,2,3),(3,2,0),(0,2,0)]);
+#curve(pos=[(0,3,0),(0,3,3),(3,3,3),(3,3,0),(0,3,0)]);
+
+#Draw the board (shutup, it's a draft ok)
+(lambda spacing:(
+[box(pos=(x,y,0), size=(THICKNESSS,THICKNESSS,BOARD_SIZE), color=GRID_COLOR) for x in spacing for y in spacing],
+[box(pos=(x,0,z), size=(THICKNESSS,BOARD_SIZE,THICKNESSS), color=GRID_COLOR) for x in spacing for z in spacing],
+[box(pos=(0,y,z), size=(BOARD_SIZE,THICKNESSS,THICKNESSS), color=GRID_COLOR) for y in spacing for z in spacing]))(
+linspace(-BOARD_SIZE/2.0,BOARD_SIZE/2.0,BOARD_DIMENSION+1))
 
 
 
 
 #Initialise the data list and the models list
-for x in range(0,board_dimension):
-	for y in range(0,board_dimension):
-		for z in range(0,board_dimension):
-			board_data.append(data_empty);
-			board_models.append( sphere (pos=(x,y,z), radius=0.02, color=color.white) );
+for x in range(0,BOARD_DIMENSION):
+	for y in range(0,BOARD_DIMENSION):
+		for z in range(0,BOARD_DIMENSION):
+			board_data.append(DATA_EMPTY);
+			board_models.append( make_dot(pos=(x,y,z)) );
 			
 
 #Start the worker
 worker = subprocess.Popen(['./worker'],stdin=subprocess.PIPE,stdout=subprocess.PIPE);
 #Send worker the empty board
-#(worker_output,errors)=worker.communicate(input=serialize_board(board_data));
 
+#Testing the communication
 worker.stdin.write(serialize_board(board_data)+"\n");
 worker_output = worker.stdout.readline();
 print worker_output;
+
 board_data = list(worker_output);
 update_models(board_data);
 
-#worker.stdin.write(serialize_board(board_data));
+
+
+
+
