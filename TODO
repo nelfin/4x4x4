@@ -1,12 +1,20 @@
 Little issues list to keep track of.. something..
 
+ANYONE
+-- Use the issue tracker, maybe?
+-- Make the visualiser / worker repeatedly read and write on a loop, so we can routinely ask and receive for game states
+-- Actually add some AI maybe...
+
 TIM
 -- Test out git (if you can see this, this is done)
 
 JOSH
 -- You too
--- Add Deets to README
+-- Add Deets to README _/ (that's a tick)
 
 ANDREW
 -- Chill out
--- Add Deets to README
+DONE-- Add Deets to README
+
+TIM AND JOSH
+-- Merge visualisation code
