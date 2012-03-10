@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
-  
+
+
 int main(int argc, char *argv[])
 {
 	//while (1)
@@ -10,9 +11,13 @@ int main(int argc, char *argv[])
 		
 		//Printing to stderr will show output on the terminal window. Use this to write debug messages in the terminal
 		fprintf(stderr,"Worker read board state: %s\n",board_state);
-		
+		sleep(3);
 		//A dummy state to return (no algorithm actually implemented here)
-		printf("xxxoeeeeeeexeeeeeeeeeeeoooeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
+		printf("xxxoeeeeeeexeeeeeeeeeeeoooeeeeeeeeeeeeeeeeeeeexxeeeeeeeeeeeeeeee\n");
+		fprintf(stderr,"Output sent\n");
+		sleep(3);
+		fprintf(stderr,"Worker shutting down\n");
+		
 	//}
 	return 0;
 }

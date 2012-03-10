@@ -129,14 +129,16 @@ worker = subprocess.Popen(['./worker'],stdin=subprocess.PIPE,stdout=subprocess.P
 
 #Testing the communication
 worker.stdin.write(serialize_board(board_data)+"\n")
-worker_output = worker.stdout.readline()
-print worker_output
+worker_output = worker.stdout.read(64)
+print "Python read board state:",worker_output
 
 board_data = list(worker_output)
 update_models(board_data)
 
+
+
 #The main loop
-while 1:
+while True:
 	if scene.kb.keys:
 		s = scene.kb.getkey()
 		if s=="g":
@@ -146,6 +148,7 @@ while 1:
 			grid.visible = grid_visible
 			squares.visible = dots_visible	
 			update_models(board_data);
+	
 	rate(FPS);
 
 
