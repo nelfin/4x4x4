@@ -1,6 +1,7 @@
 Little issues list to keep track of.. something..
 
 ANYONE
+-- Use the issue tracker, maybe?
 -- Make the visualiser / worker repeatedly read and write on a loop, so we can routinely ask and receive for game states
 -- Actually add some AI maybe...
 
@@ -13,4 +14,4 @@ JOSH
 
 ANDREW
 -- Chill out
--- Add Deets to README
+DONE-- Add Deets to README
