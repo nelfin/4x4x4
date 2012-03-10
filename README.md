@@ -40,7 +40,7 @@ Tentative titles for agent
 * FourCubed
   + Josh
 * 64
-* Noughtilus
+* Naughtilus
   + Josh
   + Tim
 
