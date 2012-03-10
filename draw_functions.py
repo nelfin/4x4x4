@@ -5,7 +5,7 @@ from visual import *
 GRID_COLOR = color.blue
 NOUGHTS_COLOR = color.green
 CROSSES_COLOR = color.red
-DIMENSIONS = 7
+DIMENSIONS = 4
 GAP_SIZE   = 10
 BOARD_SIZE = GAP_SIZE * DIMENSIONS
 THICKNESSS = 0.5
