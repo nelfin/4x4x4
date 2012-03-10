@@ -1,3 +1,4 @@
+#! /usr/bin/python
 from visual import *
 import subprocess
 import sys
