@@ -3,7 +3,7 @@ from visual import *
 import subprocess
 import sys
 
-
+FPS = 60
 DATA_EMPTY='e'
 DATA_NOUGHT='x'
 DATA_CROSS='o'
@@ -11,12 +11,15 @@ DATA_CROSS='o'
 board_data = list()
 board_models = list()
 
+grid_visible = True
+dots_visible = False
+
 #Drawing constants
 GRID_COLOR = color.white
 NOUGHTS_COLOR = color.green
 CROSSES_COLOR = color.red
 DOT_COLOR = color.white
-DOTS_VISIBLE = False
+
 BOARD_DIMENSION = 4
 GAP_SIZE   = 10
 BOARD_SIZE = GAP_SIZE * BOARD_DIMENSION
@@ -35,7 +38,7 @@ def make_nought(pos, color=NOUGHTS_COLOR, radius=NOUGHTS_RADIUS):
 #Draw a dot for an empty space.
 def make_dot(pos, color=DOT_COLOR, radius=NOUGHTS_RADIUS/10.0):
 	dot = make_nought(pos,color,radius)
-	dot.visible = DOTS_VISIBLE
+	dot.visible = dots_visible
 	return dot
 
 #Draw an X for the crosses player.
@@ -92,12 +95,23 @@ def update_models(data):
 #curve(pos=[(0,3,0),(0,3,3),(3,3,3),(3,3,0),(0,3,0)])
 
 #Draw the board (shutup, it's a draft ok)
+
+#Draw the grid
+grid = frame()
 (lambda spacing:(
-[box(pos=(x,y,0), size=(THICKNESSS,THICKNESSS,BOARD_SIZE), color=GRID_COLOR) for x in spacing for y in spacing],
-[box(pos=(x,0,z), size=(THICKNESSS,BOARD_SIZE,THICKNESSS), color=GRID_COLOR) for x in spacing for z in spacing],
-[box(pos=(0,y,z), size=(BOARD_SIZE,THICKNESSS,THICKNESSS), color=GRID_COLOR) for y in spacing for z in spacing]))(
+[box(frame=grid,pos=(x,y,0), size=(THICKNESSS,THICKNESSS,BOARD_SIZE), color=GRID_COLOR) for x in spacing for y in spacing],
+[box(frame=grid,pos=(x,0,z), size=(THICKNESSS,BOARD_SIZE,THICKNESSS), color=GRID_COLOR) for x in spacing for z in spacing],
+[box(frame=grid,pos=(0,y,z), size=(BOARD_SIZE,THICKNESSS,THICKNESSS), color=GRID_COLOR) for y in spacing for z in spacing]))(
 linspace(-BOARD_SIZE/2.0,BOARD_SIZE/2.0,BOARD_DIMENSION+1))
 
+#Also set up the squares format that we can switch to later
+squares = frame()
+for level in range(0,BOARD_DIMENSION):
+	y = level * GAP_SIZE
+	curve(frame=squares,pos=[(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0),(BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0),(BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,BOARD_SIZE/2.0),(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,BOARD_SIZE/2.0),(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0)])
+
+
+squares.visible = False
 
 
 
@@ -121,7 +135,18 @@ print worker_output
 board_data = list(worker_output)
 update_models(board_data)
 
-
+#The main loop
+while 1:
+	if scene.kb.keys:
+		s = scene.kb.getkey()
+		if s=="g":
+			grid_visible = not grid_visible
+			dots_visible = not dots_visible
+			
+			grid.visible = grid_visible
+			squares.visible = dots_visible	
+			update_models(board_data);
+	rate(FPS);
 
 
 
