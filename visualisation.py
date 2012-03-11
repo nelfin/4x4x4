@@ -4,6 +4,8 @@ import subprocess
 import sys
 import time
 import atexit
+import os
+import signal
 
 worker = subprocess.Popen(['./worker'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 
@@ -14,6 +16,7 @@ def shutdown():
 	global worker
 	print "[visual] shutting down"
 	worker.kill()
+	os.kill(os.getpid(), signal.SIGKILL)
 #atexit.register(shutdown)
 
 FPS = 60
@@ -38,8 +41,6 @@ NOUGHTS_RADIUS = GAP_SIZE/3.0
 
 CROSSES_SIZE = (GAP_SIZE,1,1)
 CENTRE_OFFSET = vector(GAP_SIZE/2.0,GAP_SIZE/2.0,GAP_SIZE/2.0) - vector(BOARD_SIZE/2.0,BOARD_SIZE/2.0,BOARD_SIZE/2.0)
-
-#Start the worker
 
 board_data = list()
 board_models = list()
