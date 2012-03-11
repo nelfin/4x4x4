@@ -64,7 +64,8 @@ state *get_successors(state s, char player) {
 int main(void)
 {
     state *next;
-    int i;
+    int i = 0;
+
     next = get_successors(initial_state, NOUGHTS);
     next = get_successors(next[0], CROSSES);
     next = get_successors(next[1], NOUGHTS);
