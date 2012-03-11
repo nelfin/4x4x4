@@ -1,3 +1,4 @@
+/* vim: set ts=4: */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -13,7 +14,7 @@ int main(int argc, char *argv[])
 		scanf ("%s",board_state);
 		
 		//Printing to stderr will show output on the terminal window. Use this to write debug messages in the terminal
-		fprintf(stderr,"Worker received board state: %s from visualiser\n",board_state);
+		fprintf(stderr,"[worker] received board state: %s from visualiser\n",board_state);
 		
 		//Simulate calculation
 		sleep(3);
@@ -28,7 +29,7 @@ int main(int argc, char *argv[])
 		//This fixes the problem of python hanging on waiting for an EOF character
 		fflush(stdout);
 		
-		fprintf(stderr,"Dummy output sent\n");
+		fprintf(stderr,"[worker] Dummy output sent\n");
 		i++;
 	}
 	return 0;
