@@ -9,10 +9,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef char state[BOARD_DIMENSIONS][BOARD_DIMENSIONS][BOARD_DIMENSIONS];
+typedef unsigned char state[BOARD_DIMENSIONS][BOARD_DIMENSIONS][BOARD_DIMENSIONS];
 
 state initial_state = {EMPTY};
-char display[3] = {' ', 'O', 'X'};
+unsigned char display[3] = {' ', 'O', 'X'};
 
 // Debug printer for states
 void prettyprint_state (state s) {
