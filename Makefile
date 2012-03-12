@@ -1,6 +1,6 @@
 CC := gcc
 
-CFLAGS  := -Wall
+CFLAGS  := -Wall -Iinclude
 LDFLAGS :=
 
 PROGS := worker state_functions

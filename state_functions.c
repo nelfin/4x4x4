@@ -1,23 +1,30 @@
-#define BOARD_DIMENSIONS 4
-#define SQUARES BOARD_DIMENSIONS*BOARD_DIMENSIONS*BOARD_DIMENSIONS
-#define EMPTY   0
-#define NOUGHTS 1
-#define CROSSES 2
-#define INVALID 3
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-typedef unsigned char state[BOARD_DIMENSIONS][BOARD_DIMENSIONS][BOARD_DIMENSIONS];
-
-typedef struct _retval {
-    state *result;
-    int numsucc;
-} retval;
+#include "state_functions.h"
 
 state initial_state = {EMPTY};
 unsigned char display[3] = {' ', 'O', 'X'};
+
+int main(void)
+{
+    retval plies[10];
+    int i = 0;
+
+    plies[0] = get_successors(initial_state, NOUGHTS);
+    plies[1] = get_successors(plies[0].result[0], CROSSES);
+    plies[2] = get_successors(plies[1].result[0], NOUGHTS);
+    plies[3] = get_successors(plies[2].result[0], CROSSES);
+    plies[4] = get_successors(plies[3].result[0], NOUGHTS);
+    plies[5] = get_successors(plies[4].result[0], CROSSES);
+    plies[6] = get_successors(plies[5].result[0], NOUGHTS);
+    for (i = 0; i < plies[6].numsucc; i++) {
+        prettyprint_state(plies[6].result[i]);
+    }
+
+    for (i = 0; i < 7; i++) {
+        free(plies[i].result);
+    }
+
+    return EXIT_SUCCESS;
+}
 
 // Debug printer for states
 void prettyprint_state (state s) {
@@ -68,25 +75,3 @@ retval get_successors(state s, char player) {
     return ret;
 }
 
-int main(void)
-{
-    retval plies[10];
-    int i = 0;
-
-    plies[0] = get_successors(initial_state, NOUGHTS);
-    plies[1] = get_successors(plies[0].result[0], CROSSES);
-    plies[2] = get_successors(plies[1].result[0], NOUGHTS);
-    plies[3] = get_successors(plies[2].result[0], CROSSES);
-    plies[4] = get_successors(plies[3].result[0], NOUGHTS);
-    plies[5] = get_successors(plies[4].result[0], CROSSES);
-    plies[6] = get_successors(plies[5].result[0], NOUGHTS);
-    for (i = 0; i < plies[6].numsucc; i++) {
-        prettyprint_state(plies[6].result[i]);
-    }
-
-    for (i = 0; i < 7; i++) {
-        free(plies[i].result);
-    }
-
-    return EXIT_SUCCESS;
-}
