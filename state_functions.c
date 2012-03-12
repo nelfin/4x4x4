@@ -75,4 +75,6 @@ int main(void)
     next = get_successors(next[5], NOUGHTS);
     while (next[i][0][0][0] != INVALID)
         prettyprint_state(next[i++]);
+
+    return EXIT_SUCCESS;
 }
