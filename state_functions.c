@@ -11,6 +11,11 @@
 
 typedef unsigned char state[BOARD_DIMENSIONS][BOARD_DIMENSIONS][BOARD_DIMENSIONS];
 
+typedef struct _retval {
+    state *result;
+    int numsucc;
+} retval;
+
 state initial_state = {EMPTY};
 unsigned char display[3] = {' ', 'O', 'X'};
 
@@ -44,8 +49,9 @@ char victory(state s) {
 }
 
 // get valid succsessors of a state, terminated with INVALID in bottom top left
-state *get_successors(state s, char player) {
+retval get_successors(state s, char player) {
     state *result = malloc(sizeof(state)*SQUARES);
+    retval ret;
     int i=0;
     int x,y,z;
     for(x=0; x<BOARD_DIMENSIONS; x++)
@@ -57,24 +63,30 @@ state *get_successors(state s, char player) {
                     //if (victory(result[i-1])) 
                     //  {handle victory conditions, or report error state}
                 }
-    result[i][0][0][0] = INVALID; //TODO: better way to terminate
-    return result;
+    ret.result = result;
+    ret.numsucc = i;
+    return ret;
 }
 
 int main(void)
 {
-    state *next;
+    retval plys[10];
     int i = 0;
 
-    next = get_successors(initial_state, NOUGHTS);
-    next = get_successors(next[0], CROSSES);
-    next = get_successors(next[1], NOUGHTS);
-    next = get_successors(next[2], CROSSES);
-    next = get_successors(next[3], NOUGHTS);
-    next = get_successors(next[4], CROSSES);
-    next = get_successors(next[5], NOUGHTS);
-    while (next[i][0][0][0] != INVALID)
-        prettyprint_state(next[i++]);
+    plys[0] = get_successors(initial_state, NOUGHTS);
+    plys[1] = get_successors(plys[0].result[0], CROSSES);
+    plys[2] = get_successors(plys[1].result[0], NOUGHTS);
+    plys[3] = get_successors(plys[2].result[0], CROSSES);
+    plys[4] = get_successors(plys[3].result[0], NOUGHTS);
+    plys[5] = get_successors(plys[4].result[0], CROSSES);
+    plys[6] = get_successors(plys[5].result[0], NOUGHTS);
+    for (i = 0; i < plys[6].numsucc; i++) {
+        prettyprint_state(plys[6].result[i]);
+    }
+
+    for (i = 0; i < 7; i++) {
+        free(plys[i].result);
+    }
 
     return EXIT_SUCCESS;
 }
