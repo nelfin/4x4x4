@@ -1,8 +1,23 @@
-#! /usr/bin/python
-from visual import *
+#!/usr/bin/python
+# vim: set ts=4 noet:
 import subprocess
 import sys
 import time
+import atexit
+import os
+import signal
+
+worker = subprocess.Popen(['./worker'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+
+from visual import *
+
+@atexit.register
+def shutdown():
+	global worker
+	print "[visual] shutting down"
+	worker.kill()
+	os.kill(os.getpid(), signal.SIGKILL)
+#atexit.register(shutdown)
 
 FPS = 60
 
@@ -26,9 +41,6 @@ NOUGHTS_RADIUS = GAP_SIZE/3.0
 
 CROSSES_SIZE = (GAP_SIZE,1,1)
 CENTRE_OFFSET = vector(GAP_SIZE/2.0,GAP_SIZE/2.0,GAP_SIZE/2.0) - vector(BOARD_SIZE/2.0,BOARD_SIZE/2.0,BOARD_SIZE/2.0)
-
-#Start the worker
-worker = subprocess.Popen(['./worker'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 
 board_data = list()
 board_models = list()
@@ -116,29 +128,26 @@ for x in range(0,BOARD_DIMENSION):
 			board_models.append( make_dot(pos=(x,y,z)) )
 			
 
-
 #The main loop
 while True:
-	try:
-		#Keyboard interaction
-		if scene.kb.keys:
-			s = scene.kb.getkey()
-			if s=="g":
-				grid_visible = not grid_visible
-				dots_visible = not dots_visible
-		
-				grid.visible = grid_visible
-				squares.visible = dots_visible	
-				update_models(board_data);
-
-		rate(FPS);
+	#Keyboard interaction
+	if scene.kb.keys:
+		s = scene.kb.getkey()
+		if s=="g":
+			grid_visible = not grid_visible
+			dots_visible = not dots_visible
 	
-		#Input loop
-		reply = send_worker_message(serialize_board(board_data))
-		print "Visualieser read board state:",reply," from worker"
+			grid.visible = grid_visible
+			squares.visible = dots_visible	
+			update_models(board_data);
+		if s == 'q':
+			sys.exit()
+	rate(FPS);
 
-		board_data = list(reply)
-		update_models(board_data)
-	except KeyboardInterrupt:
-		worker.kill()
-		break
+	#Input loop
+	reply = send_worker_message(serialize_board(board_data))
+	print "[visual] read", reply, "from worker"
+
+	board_data = list(reply)
+	update_models(board_data)
+
