@@ -70,22 +70,22 @@ retval get_successors(state s, char player) {
 
 int main(void)
 {
-    retval plys[10];
+    retval plies[10];
     int i = 0;
 
-    plys[0] = get_successors(initial_state, NOUGHTS);
-    plys[1] = get_successors(plys[0].result[0], CROSSES);
-    plys[2] = get_successors(plys[1].result[0], NOUGHTS);
-    plys[3] = get_successors(plys[2].result[0], CROSSES);
-    plys[4] = get_successors(plys[3].result[0], NOUGHTS);
-    plys[5] = get_successors(plys[4].result[0], CROSSES);
-    plys[6] = get_successors(plys[5].result[0], NOUGHTS);
-    for (i = 0; i < plys[6].numsucc; i++) {
-        prettyprint_state(plys[6].result[i]);
+    plies[0] = get_successors(initial_state, NOUGHTS);
+    plies[1] = get_successors(plies[0].result[0], CROSSES);
+    plies[2] = get_successors(plies[1].result[0], NOUGHTS);
+    plies[3] = get_successors(plies[2].result[0], CROSSES);
+    plies[4] = get_successors(plies[3].result[0], NOUGHTS);
+    plies[5] = get_successors(plies[4].result[0], CROSSES);
+    plies[6] = get_successors(plies[5].result[0], NOUGHTS);
+    for (i = 0; i < plies[6].numsucc; i++) {
+        prettyprint_state(plies[6].result[i]);
     }
 
     for (i = 0; i < 7; i++) {
-        free(plys[i].result);
+        free(plies[i].result);
     }
 
     return EXIT_SUCCESS;
