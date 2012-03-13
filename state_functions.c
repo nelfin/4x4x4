@@ -1,7 +1,16 @@
 #include "state_functions.h"
 
+int main(void) {
+    computer = CROSSES;
+
+    //succ_demo();
+    pick_demo();
+
+    return EXIT_SUCCESS;
+}
+
 void pick_demo() {
-    pick_next(initial_state, CROSSES, 1);
+    pick_next(initial_state, computer, 2);
 }
 
 void succ_demo() {
@@ -22,13 +31,6 @@ void succ_demo() {
     for (i = 0; i < 7; i++) {
         free(plies[i].result);
     }
-}
-
-int main(void) {
-    //succ_demo();
-    pick_demo();
-
-    return EXIT_SUCCESS;
 }
 
 // Debug printer for states
@@ -97,7 +99,7 @@ _move pick_next(state s, char player, int depth) {
 
     possible_moves = get_successors(s, player);
     for (i = 0; i < possible_moves.numsucc; i++) {
-        score = minimax(s, player, depth);
+        score = minimax(s, player, INT_MIN, INT_MAX, depth);
         if (score > best_score) {
             best_score = score;
             best_move = i;
@@ -111,25 +113,37 @@ _move pick_next(state s, char player, int depth) {
     return retmove;
 }
 
-int minimax(state s, char player, int depth) {
+int minimax(state s, char player, int alpha, int beta, int depth) {
     int i, v;
-    int alpha;
     retval moves;
     char next_player;
+
+    next_player = (player == CROSSES) ? NOUGHTS : CROSSES;
 
     if (depth <= 0) {
         return evaluate(s, player);
     }
 
-    next_player = (player == CROSSES) ? NOUGHTS : CROSSES;
-
-    alpha = INT_MIN; // -inf
     moves = get_successors(s, next_player);
-    for (i = 0; i < moves.numsucc; i++) {
-        v = minimax(moves.result[i], player, depth-1);
-        alpha = max(alpha, v);
-    }
 
-    return alpha;
+    if (player == computer) {
+        for (i = 0; i < moves.numsucc; i++) {
+            v = minimax(moves.result[i], next_player, alpha, beta, depth-1);
+            alpha = max(alpha, v);
+            if (beta <= alpha) {
+                break;
+            }
+        }
+        return alpha;
+    } else {
+        for (i = 0; i < moves.numsucc; i++) {
+            v = minimax(moves.result[i], next_player, alpha, beta, depth-1);
+            beta = min(beta, v);
+            if (beta <= alpha) {
+                break;
+            }
+        }
+        return beta;
+    }
 }
 
