@@ -1,6 +1,6 @@
 #include "state_functions.h"
 
-state initial_state = {EMPTY};
+state initial_state = {{{EMPTY}}};
 unsigned char display[3] = {' ', 'O', 'X'};
 
 int main(void)
