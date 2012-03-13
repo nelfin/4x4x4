@@ -1,10 +1,10 @@
 #include "state_functions.h"
 
-state initial_state = {{{EMPTY}}};
-unsigned char display[3] = {' ', 'O', 'X'};
+void pick_demo() {
+    pick_next(initial_state, CROSSES, 1);
+}
 
-int main(void)
-{
+void succ_demo() {
     retval plies[10];
     int i = 0;
 
@@ -22,6 +22,11 @@ int main(void)
     for (i = 0; i < 7; i++) {
         free(plies[i].result);
     }
+}
+
+int main(void) {
+    //succ_demo();
+    pick_demo();
 
     return EXIT_SUCCESS;
 }
@@ -72,6 +77,59 @@ retval get_successors(state s, char player) {
                 }
     ret.result = result;
     ret.numsucc = i;
+
+    fprintf(stderr, "[sf:get_successors] found %d successors\n", i);
+
     return ret;
+}
+
+int evaluate(state s, char player) {
+    // TODO; actually score the board
+    return (int) player;
+}
+
+_move pick_next(state s, char player, int depth) {
+    retval possible_moves;
+    _move retmove;
+    int i, score;
+    int best_score = INT_MIN;
+    int best_move;
+
+    possible_moves = get_successors(s, player);
+    for (i = 0; i < possible_moves.numsucc; i++) {
+        score = minimax(s, player, depth);
+        if (score > best_score) {
+            best_score = score;
+            best_move = i;
+        }
+        fprintf(stderr,
+                "[sf:pick_next] minimax(%02d) = %d\n", i, score);
+    }
+
+    retmove.position = best_move;
+    retmove.score = best_score;
+    return retmove;
+}
+
+int minimax(state s, char player, int depth) {
+    int i, v;
+    int alpha;
+    retval moves;
+    char next_player;
+
+    if (depth <= 0) {
+        return evaluate(s, player);
+    }
+
+    next_player = (player == CROSSES) ? NOUGHTS : CROSSES;
+
+    alpha = INT_MIN; // -inf
+    moves = get_successors(s, next_player);
+    for (i = 0; i < moves.numsucc; i++) {
+        v = minimax(moves.result[i], player, depth-1);
+        alpha = max(alpha, v);
+    }
+
+    return alpha;
 }
 
