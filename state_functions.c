@@ -97,6 +97,25 @@ char victory(state s, int x, int y, int z) {
     int line2 = 1;
     int line3 = 1;
     
+    /* ALTERNATIVE METHOD... POTENTAILLY LESS EFFICIENT
+    int lines[13] = {1,1,1,1,1,1,1,1,1,1,1,1,1}
+    for (vary=0; vary<BOARD_DIMENSION; vary++) {
+        line[0]  *= s[x][y][vary];
+        line[1]  *= s[x][vary][z];
+        line[2]  *= s[vary][y][z];
+        line[3]  *= s[x][vary][vary];
+        line[4]  *= s[vary][y][vary];
+        line[5]  *= s[vary][vary][z];
+        line[6]  *= s[x][3-vary][vary];
+        line[7]  *= s[3-vary][y][vary];
+        line[8]  *= s[3-vary][vary][z];
+        line[9]  *= s[vary][vary][vary];
+        line[10] *= s[3-vary][vary][vary];
+        line[11] *= s[vary][3-vary][vary];
+        line[12] *= s[vary][vary][3-vary];
+    }
+    for (i=0; i<13; i++) if (lines[i] == NOUGHTS || lines[i] == 16) return player;*/
+    
     //FLAT LINES (through (x,y,z))
     for (vary=0; vary<BOARD_DIMENSION; vary++) {
         line1 *= s[x][y][vary];
