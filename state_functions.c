@@ -102,7 +102,7 @@ char victory(state s, int x, int y, int z) {
         line1 *= s[x][y][vary];
         line2 *= s[x][vary][z];
         line3 *= s[vary][y][z];}
-    if (line1 == NOUGHTS || line1 == 16 || //TODO: 2^BOARD_DIMENSION
+    if (line1 == NOUGHTS || line1 == 16 || //TODO: CROSSES^BOARD_DIMENSION
         line2 == NOUGHTS || line2 == 16 ||
         line3 == NOUGHTS || line3 == 16) return player;
     
@@ -112,7 +112,7 @@ char victory(state s, int x, int y, int z) {
         line1 *= s[x][vary][vary];
         line2 *= s[vary][y][vary];
         line3 *= s[vary][vary][z];}   
-    if (line1 == NOUGHTS || line1 == 16 || //TODO: 2^BOARD_DIMENSION
+    if (line1 == NOUGHTS || line1 == 16 ||
         line2 == NOUGHTS || line2 == 16 ||
         line3 == NOUGHTS || line3 == 16) return player;
     
@@ -122,7 +122,7 @@ char victory(state s, int x, int y, int z) {
         line1 *= s[x][3-vary][vary]; //Should probably use (BOARD_DIMENSION-1)...
         line2 *= s[3-vary][y][vary];
         line3 *= s[3-vary][vary][z];}
-    if (line1 == NOUGHTS || line1 == 16 || //TODO: 2^BOARD_DIMENSION
+    if (line1 == NOUGHTS || line1 == 16 ||
         line2 == NOUGHTS || line2 == 16 ||
         line3 == NOUGHTS || line3 == 16) return player;
     
@@ -134,9 +134,10 @@ char victory(state s, int x, int y, int z) {
         line2 *= s[3-vary][vary][vary];
         line3 *= s[vary][3-vary][vary];
         line4 *= s[vary][vary][3-vary];}
-    if (line1 == NOUGHTS || line1 == 16 || //TODO: 2^BOARD_DIMENSION
+    if (line1 == NOUGHTS || line1 == 16 ||
         line2 == NOUGHTS || line2 == 16 ||
-        line3 == NOUGHTS || line3 == 16) return player;
+        line3 == NOUGHTS || line3 == 16 ||
+        line4 == NOUGHTS || line4 == 16) return player;
         
     return EMPTY;
 }
