@@ -86,12 +86,62 @@ void replicate(state s, char player, state *dest) {
 // EMPTY: no victory
 // NOUGHTS: 'O' player wins
 // CROSSES: 'X' player wins
-// INVALID: multiple winners; error condition
-char victory(state s) {
-	return 0;
+// INVALID: multiple winners; error condition TODO
+// ASSUMES: Currently no winner, 4x4x4 board
+// (x,y,z) = last move made.
+char victory(state s, int x, int y, int z) {
+    char player = s[x][y][z];
+    if (!player) return EMPTY;
+    int vary;
+    int line1 = 1;
+    int line2 = 1;
+    int line3 = 1;
+    
+    //FLAT LINES (through (x,y,z))
+    for (vary=0; vary<BOARD_DIMENSION; vary++) {
+        line1 *= s[x][y][vary];
+        line2 *= s[x][vary][z];
+        line3 *= s[vary][y][z];}
+    if (line1 == NOUGHTS || line1 == 16 || //TODO: 2^BOARD_DIMENSION
+        line2 == NOUGHTS || line2 == 16 ||
+        line3 == NOUGHTS || line3 == 16) return player;
+    
+    //EVEN DIAGONALS (through slices containing (x,y,z))
+    line1 = line2 = line3 = 1;
+    for (vary=0; vary<BOARD_DIMENSION; vary++) {
+        line1 *= s[x][vary][vary];
+        line2 *= s[vary][y][vary];
+        line3 *= s[vary][vary][z];}   
+    if (line1 == NOUGHTS || line1 == 16 || //TODO: 2^BOARD_DIMENSION
+        line2 == NOUGHTS || line2 == 16 ||
+        line3 == NOUGHTS || line3 == 16) return player;
+    
+    //ODD DIAGONALS (through slices containing (x,y,z))
+    line1 = line2 = line3 = 1;
+    for (vary=0; vary<BOARD_DIMENSION; vary++) {
+        line1 *= s[x][3-vary][vary]; //Should probably use (BOARD_DIMENSION-1)...
+        line2 *= s[3-vary][y][vary];
+        line3 *= s[3-vary][vary][z];}
+    if (line1 == NOUGHTS || line1 == 16 || //TODO: 2^BOARD_DIMENSION
+        line2 == NOUGHTS || line2 == 16 ||
+        line3 == NOUGHTS || line3 == 16) return player;
+    
+    //MAIN DIAGONALS (of whole board)
+    int line4 = 1;
+    line1 = line2 = line3 = 1;
+    for (vary=0; vary<BOARD_DIMENSION; vary++) {
+        line1 *= s[vary][vary][vary];
+        line2 *= s[3-vary][vary][vary];
+        line3 *= s[vary][3-vary][vary];
+        line4 *= s[vary][vary][3-vary];}
+    if (line1 == NOUGHTS || line1 == 16 || //TODO: 2^BOARD_DIMENSION
+        line2 == NOUGHTS || line2 == 16 ||
+        line3 == NOUGHTS || line3 == 16) return player;
+        
+    return EMPTY;
 }
 
-// get valid succsessors of a state, terminated with INVALID in bottom top left
+// get valid succsessors of a state
 retval get_successors(state s, char player) {
 	state *result = malloc(sizeof(state)*SQUARES);
 	retval ret;

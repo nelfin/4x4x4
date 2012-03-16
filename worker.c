@@ -11,7 +11,12 @@ int main(int argc, char *argv[])
 	position_values map;
 	fill_position_values(map);
 	
-	
+	state state1;
+	fprintf(stderr,"\n");
+	copy_string_to_state("oeeeoeeeoxxxoeeeooeeeeeexxxxeeeeeeooeeeexxxxeeeexoooeeeexxxxeeee", state1);
+	prettyprint_state(state1);
+	fprintf(stderr,"Victory of state1: %i\n", victory(state1, 2, 2, 2));
+
 	while (1)
 	{
 	

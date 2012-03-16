@@ -37,7 +37,7 @@ typedef struct _retval {
 void prettyprint_state (state s);
 void prettyprint_position_values (position_values s);
 void replicate(state s, char player, state *dest);
-char victory(state s);
+char victory(state s, int x, int y, int z);
 retval get_successors(state s, char player);
 _move pick_next(state s, char player, int depth);
 int minimax(state s, char player, int alpha, int beta, int depth);
