@@ -15,10 +15,10 @@ debug: CFLAGS += -DDEBUG -g
 debug: all
 
 worker: $(SRC1)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(SRC2)
 
 state_functions: $(SRC2)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@.o $<
 
 .PHONY: clean veryclean
 clean:
