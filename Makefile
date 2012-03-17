@@ -3,10 +3,9 @@ CC := gcc
 CFLAGS  := -Wall -Iinclude
 LDFLAGS :=
 
-PROGS := worker state_functions
+PROGS := worker
 
-SRC1 := worker.c
-SRC2 := state_functions.c
+SRC1 := worker.c state_functions.c
 
 .PHONY: all debug
 all: $(PROGS);
@@ -15,10 +14,7 @@ debug: CFLAGS += -DDEBUG -g
 debug: all
 
 worker: $(SRC1)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(SRC2)
-
-state_functions: $(SRC2)
-	$(CC) -c $(CFLAGS) $(LDFLAGS) -o $@.o $<
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 .PHONY: clean veryclean
 clean:
