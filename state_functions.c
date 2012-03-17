@@ -1,7 +1,7 @@
 #include "state_functions.h"
 
 // globals
-char computer;
+char computer = NOUGHTS; //NOUGHTS is trying to maximize. NOUGHTS plays first
 state initial_state = {{{EMPTY}}};
 const unsigned char display[3] = {' ', 'O', 'X'};
 
@@ -179,14 +179,26 @@ retval get_successors(state s, char player) {
 	ret.result = result;
 	ret.numsucc = i;
 
-	fprintf(stderr, "[sf:get_successors] found %d successors\n", i);
+	//fprintf(stderr, "[sf:get_successors] found %d successors\n", i);
 
 	return ret;
 }
 
+void free_retval(retval r) {
+	int i;
+	for (i = 0; i < r.numsucc; i++) {
+		free(r.result[i]);
+	}
+}
+
 int evaluate(state s, char player) {
-	// TODO; actually score the board
-	return (int) player;
+	int score=0;
+	if(player == NOUGHTS){
+		
+	}else if(player == CROSSES){
+	
+	}
+	return score;
 }
 
 //Uses heuristics to score a state
@@ -287,13 +299,15 @@ _move pick_next(state s, char player, int depth) {
 	possible_moves = get_successors(s, player);
 	for (i = 0; i < possible_moves.numsucc; i++) {
 		score = minimax(s, player, INT_MIN, INT_MAX, depth);
-		if (score > best_score) {
+		if (score > best_score) { //TODO I think the min player will need to minimize rather than maximize
 			best_score = score;
 			best_move = i;
 		}
 		fprintf(stderr,
 				"[sf:pick_next] minimax(%02d) = %d\n", i, score);
 	}
+	
+	free_retval(possible_moves);
 
 	retmove.position = best_move;
 	retmove.score = best_score;
@@ -321,6 +335,7 @@ int minimax(state s, char player, int alpha, int beta, int depth) {
 				break;
 			}
 		}
+		free_retval(moves);
 		return alpha;
 	} else {
 		for (i = 0; i < moves.numsucc; i++) {
@@ -330,6 +345,7 @@ int minimax(state s, char player, int alpha, int beta, int depth) {
 				break;
 			}
 		}
+		free_retval(moves);
 		return beta;
 	}
 }
