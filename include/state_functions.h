@@ -38,13 +38,17 @@ void prettyprint_state (state s);
 void prettyprint_position_values (position_values s);
 void replicate(state s, char player, state *dest);
 char victory(state s, int x, int y, int z);
+
 retval get_successors(state s, char player);
+void free_retval(retval r);
+
 _move pick_next(state s, char player, int depth);
 int minimax(state s, char player, int alpha, int beta, int depth);
 int evaluate(state s, char player);
 void fill_position_values(position_values scoremap);
 int score_state(state s, position_values map);
 char get_turn(state s);
+
 
 void pick_demo();
 void succ_demo();

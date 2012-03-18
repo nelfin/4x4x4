@@ -1,7 +1,7 @@
 #include "state_functions.h"
 
 // globals
-char computer;
+char computer = NOUGHTS; //NOUGHTS is trying to maximize. NOUGHTS plays first
 state initial_state = {{{EMPTY}}};
 const unsigned char display[3] = {' ', 'O', 'X'};
 
@@ -153,30 +153,42 @@ char victory(state s, int x, int y, int z) {
 
 // get valid succsessors of a state
 retval get_successors(state s, char player) {
-    state *result = malloc(sizeof(state)*SQUARES);
-    retval ret;
-    int i=0;
-    int x,y,z;
-    for(x=0; x<BOARD_DIMENSION; x++)
-        for(y=0; y<BOARD_DIMENSION; y++)
-            for(z=0; z<BOARD_DIMENSION; z++)
-                if (s[x][y][z] == EMPTY) {
-                    replicate(s,player,&result[i]);
-                    result[i++][x][y][z] = player;
-                    //if (victory(result[i-1]))
-                    //  {handle victory conditions, or report error state}
-                }
-    ret.result = result;
-    ret.numsucc = i;
+	state *result = malloc(sizeof(state)*SQUARES);
+	retval ret;
+	int i=0;
+	int x,y,z;
+	for(x=0; x<BOARD_DIMENSION; x++)
+		for(y=0; y<BOARD_DIMENSION; y++)
+			for(z=0; z<BOARD_DIMENSION; z++)
+				if (s[x][y][z] == EMPTY) {
+					replicate(s,player,&result[i]);
+					result[i++][x][y][z] = player;
+					//if (victory(result[i-1])) 
+					//  {handle victory conditions, or report error state}
+				}
+	ret.result = result;
+	ret.numsucc = i;
 
-    fprintf(stderr, "[sf:get_successors] found %d successors\n", i);
+	//fprintf(stderr, "[sf:get_successors] found %d successors\n", i);
 
-    return ret;
+	return ret;
+}
+
+void free_retval(retval r) {
+	int i;
+	for (i = 0; i < r.numsucc; i++) {
+		free(r.result[i]);
+	}
 }
 
 int evaluate(state s, char player) {
-    // TODO; actually score the board
-    return (int) player;
+	int score=0;
+	if(player == NOUGHTS){
+		
+	}else if(player == CROSSES){
+	
+	}
+	return score;
 }
 
 //Uses heuristics to score a state
@@ -268,60 +280,64 @@ void fill_position_values(position_values map) {
 
 
 _move pick_next(state s, char player, int depth) {
-    retval possible_moves;
-    _move retmove;
-    int i, score;
-    int best_score = INT_MIN;
-    int best_move;
+	retval possible_moves;
+	_move retmove;
+	int i, score;
+	int best_score = INT_MIN;
+	int best_move;
 
-    possible_moves = get_successors(s, player);
-    for (i = 0; i < possible_moves.numsucc; i++) {
-        score = minimax(s, player, INT_MIN, INT_MAX, depth);
-        if (score > best_score) {
-            best_score = score;
-            best_move = i;
-        }
-        fprintf(stderr,
-                "[sf:pick_next] minimax(%02d) = %d\n", i, score);
-    }
+	possible_moves = get_successors(s, player);
+	for (i = 0; i < possible_moves.numsucc; i++) {
+		score = minimax(s, player, INT_MIN, INT_MAX, depth);
+		if (score > best_score) { //TODO I think the min player will need to minimize rather than maximize
+			best_score = score;
+			best_move = i;
+		}
+		fprintf(stderr,
+				"[sf:pick_next] minimax(%02d) = %d\n", i, score);
+	}
+	
+	free_retval(possible_moves);
 
-    retmove.position = best_move;
-    retmove.score = best_score;
-    return retmove;
+	retmove.position = best_move;
+	retmove.score = best_score;
+	return retmove;
 }
 
 int minimax(state s, char player, int alpha, int beta, int depth) {
-    int i, v;
-    retval moves;
-    char next_player;
+	int i, v;
+	retval moves;
+	char next_player;
 
-    next_player = (player == CROSSES) ? NOUGHTS : CROSSES;
+	next_player = (player == CROSSES) ? NOUGHTS : CROSSES;
 
-    if (depth <= 0) {
-        return evaluate(s, player);
-    }
+	if (depth <= 0) {
+		return evaluate(s, player);
+	}
 
-    moves = get_successors(s, next_player);
+	moves = get_successors(s, next_player);
 
-    if (player == computer) {
-        for (i = 0; i < moves.numsucc; i++) {
-            v = minimax(moves.result[i], next_player, alpha, beta, depth-1);
-            alpha = max(alpha, v);
-            if (beta <= alpha) {
-                break;
-            }
-        }
-        return alpha;
-    } else {
-        for (i = 0; i < moves.numsucc; i++) {
-            v = minimax(moves.result[i], next_player, alpha, beta, depth-1);
-            beta = min(beta, v);
-            if (beta <= alpha) {
-                break;
-            }
-        }
-        return beta;
-    }
+	if (player == computer) {
+		for (i = 0; i < moves.numsucc; i++) {
+			v = minimax(moves.result[i], next_player, alpha, beta, depth-1);
+			alpha = max(alpha, v);
+			if (beta <= alpha) {
+				break;
+			}
+		}
+		free_retval(moves);
+		return alpha;
+	} else {
+		for (i = 0; i < moves.numsucc; i++) {
+			v = minimax(moves.result[i], next_player, alpha, beta, depth-1);
+			beta = min(beta, v);
+			if (beta <= alpha) {
+				break;
+			}
+		}
+		free_retval(moves);
+		return beta;
+	}
 }
 
 // State I/O
