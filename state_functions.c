@@ -158,6 +158,27 @@ char victory(state s, int x, int y, int z) {
     return EMPTY;
 }
 
+//A *temporary* function used in minimax to determine if a state is terminal (in the future we can check victory with the function above and use the latest move for speed improvements)
+//It uses the victory function by checking a victory at every position (brute force)
+//EMPTY: No winner
+//CROSSES: X winner
+//NOUGHTS: O winner
+char get_any_victory(state s) {
+    int x,y,z;
+    char winner=EMPTY;
+    for(x=0; x<BOARD_DIMENSION; x++){
+        for(y=0; y<BOARD_DIMENSION; y++){
+            for(z=0; z<BOARD_DIMENSION; z++){
+                winner = victory(s,x,y,z);
+                if(winner != EMPTY && winner != INVALID){
+                    return winner;
+                }
+            }
+        }
+    }
+    return EMPTY;
+}
+
 // get valid succsessors of a state
 retval get_successors(state s, char player) {
     state *result = malloc(sizeof(state)*SQUARES);
@@ -183,13 +204,12 @@ retval get_successors(state s, char player) {
 
 
 int evaluate(state s, char player) {
-    int score=0;
-    if(player == NOUGHTS){
-        
-    }else if(player == CROSSES){
-    
+    char winner = get_any_victory(s);
+    if(winner!=EMPTY){
+        return (winner==CROSSES)?1:-1;
+    }else{
+        return 0;
     }
-    return score;
 }
 
 //Uses heuristics to score a state
@@ -284,18 +304,20 @@ _move pick_next(state s, char player, int depth) {
     retval possible_moves;
     _move retmove;
     int i, score;
-    int best_score = INT_MIN;
+    int best_score = (player==CROSSES)?INT_MIN:INT_MAX; //CROSSES is trying to maximize, so default for it should be INT_MIN, vice versa
     int best_move;
 
     possible_moves = get_successors(s, player);
     for (i = 0; i < possible_moves.numsucc; i++) {
-        score = minimax(s, player, INT_MIN, INT_MAX, depth);
-        if (score > best_score) { //TODO I think the min player will need to minimize rather than maximize
+        score = minimax(possible_moves.result[i], (player==NOUGHTS?CROSSES:NOUGHTS), INT_MIN, INT_MAX, depth);
+        if ((player==CROSSES)?(score > best_score):(score < best_score)) { //X is max, O is min
             best_score = score;
             best_move = i;
         }
+        //prettyprint_state(possible_moves.result[i]);
         fprintf(stderr,
                 "[sf:pick_next] minimax(%02d) = %d\n", i, score);
+        //fprintf(stderr,"Best score: %i Best move: %i\n",best_score,best_move);
     }
     
 
@@ -311,11 +333,11 @@ int minimax(state s, char player, int alpha, int beta, int depth) {
 
     next_player = (player == CROSSES) ? NOUGHTS : CROSSES;
 
-    if (depth <= 0) {
+    if (depth <= 0 || get_any_victory(s) != EMPTY) { //TODO this should only need to check based on the latest move
         return evaluate(s, player);
     }
 
-    moves = get_successors(s, next_player);
+    moves = get_successors(s, player); //next_player?
 
     if (player == computer) {
         for (i = 0; i < moves.numsucc; i++) {

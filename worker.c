@@ -3,6 +3,7 @@
 #include <signal.h>
 #define DEPTH 2
 
+
 int main(int argc, char *argv[])
 {
     int move_number = 0;
@@ -10,11 +11,18 @@ int main(int argc, char *argv[])
     position_values map;
     fill_position_values(map);
     
-    state state1;
-    fprintf(stderr,"\n");
-    copy_string_to_state("oeeeoeeeoxxxoeeeooeeeeeexxxxeeeeeeooeeeexxxxeeeexoooeeeexxxxeeee", state1);
-    prettyprint_state(state1);
-    fprintf(stderr,"Victory of state1: %i\n", victory(state1, 2, 2, 2));
+    
+    //state state1;
+    //retval state1_ply;
+    //_move state1_next_move;
+    //fprintf(stderr,"\n");
+    //copy_string_to_state("eeeeooeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeexxx", state1);
+    
+    //state1_ply = get_successors(state1, get_turn(state1));
+    //state1_next_move = pick_next(state1, get_turn(state1), DEPTH);
+    //prettyprint_state(state1);
+    //prettyprint_state(state1_ply.result[state1_next_move.position]);
+    
 
     while (1)
     {
