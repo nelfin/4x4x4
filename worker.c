@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     {
     
         char read_state_string [64];
-        scanf ("%s",read_state_string);
+        strcpy(read_state_string, "eeeeooeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeexxx");
         
         //Printing to stderr will show output on the terminal window. Use this to write debug messages in the terminal
         fprintf(stderr,"[worker] received board state: %s from visualiser\n",read_state_string);
