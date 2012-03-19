@@ -52,6 +52,8 @@ int main(int argc, char *argv[])
         sleep(1);
         fprintf(stderr,"[worker] %s output sending\n",next_state_string);
         send_visual_message(next_state_string);
+
+        finalise_retval(&ply);
         move_number++;
     }
     return 0;

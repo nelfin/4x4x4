@@ -59,8 +59,6 @@ void copy_string_to_state(char chars[SQUARES], state output_state);
 void copy_state_to_string(state input_state, char chars[SQUARES]);
 int coords_to_index(int x,int y,int z);
 
-
-
 // inlines
 static inline int max(int x, int y) {
     return (x > y) ? x : y;
@@ -68,6 +66,10 @@ static inline int max(int x, int y) {
 
 static inline int min(int x, int y) {
     return (x < y) ? x : y;
+}
+
+static inline void finalise_retval(retval *r) {
+    free(r->result);
 }
 
 #endif

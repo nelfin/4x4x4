@@ -313,6 +313,7 @@ _move pick_next(state s, char player, int depth) {
         //fprintf(stderr,"Best score: %i Best move: %i\n",best_score,best_move);
     }
     
+    finalise_retval(&possible_moves);
 
     retmove.position = best_move;
     retmove.score = best_score;
@@ -340,7 +341,6 @@ int minimax(state s, char player, int alpha, int beta, int depth) {
                 break;
             }
         }
-        return alpha;
     } else {
         for (i = 0; i < moves.numsucc; i++) {
             v = minimax(moves.result[i], next_player, alpha, beta, depth-1);
@@ -349,6 +349,12 @@ int minimax(state s, char player, int alpha, int beta, int depth) {
                 break;
             }
         }
+    }
+
+    finalise_retval(&moves);
+    if (player == computer) {
+        return alpha;
+    } else {
         return beta;
     }
 }
@@ -412,4 +418,5 @@ void copy_state_to_string(state input_state, char chars[64]){
         }
     }
 }
+
 
