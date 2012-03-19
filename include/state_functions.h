@@ -38,9 +38,9 @@ void prettyprint_state (state s);
 void prettyprint_position_values (position_values s);
 void replicate(state s, char player, state *dest);
 char victory(state s, int x, int y, int z);
+char get_any_victory(state s);
 
 retval get_successors(state s, char player);
-void free_retval(retval r);
 
 _move pick_next(state s, char player, int depth);
 int minimax(state s, char player, int alpha, int beta, int depth);
