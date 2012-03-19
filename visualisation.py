@@ -7,10 +7,10 @@ import atexit
 import os
 import signal
 
+#Start the worker
 worker = subprocess.Popen(['./worker'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 
 from visual import *
-
 @atexit.register
 def shutdown():
 	global worker
@@ -24,8 +24,6 @@ FPS = 60
 DATA_EMPTY='e'
 DATA_NOUGHT='x'
 DATA_CROSS='o'
-
-
 
 #Drawing constants
 GRID_COLOR = color.white
@@ -128,26 +126,31 @@ for x in range(0,BOARD_DIMENSION):
 			board_models.append( make_dot(pos=(x,y,z)) )
 			
 
+
 #The main loop
 while True:
-	#Keyboard interaction
-	if scene.kb.keys:
-		s = scene.kb.getkey()
-		if s=="g":
-			grid_visible = not grid_visible
-			dots_visible = not dots_visible
+	try:
+		#Keyboard interaction
+		if scene.kb.keys:
+			s = scene.kb.getkey()
+			if s=='g':
+				grid_visible = not grid_visible
+				dots_visible = not dots_visible
+		
+				grid.visible = grid_visible
+				squares.visible = dots_visible	
+				update_models(board_data);
+			if s == 'q':
+				sys.exit()
+
+		rate(FPS);
 	
-			grid.visible = grid_visible
-			squares.visible = dots_visible	
-			update_models(board_data);
-		if s == 'q':
-			sys.exit()
-	rate(FPS);
+		#Input loop
+		reply = send_worker_message(serialize_board(board_data))
+		print "[visual] read board state:",reply," from worker\n"
 
-	#Input loop
-	reply = send_worker_message(serialize_board(board_data))
-	print "[visual] read", reply, "from worker"
-
-	board_data = list(reply)
-	update_models(board_data)
-
+		board_data = list(reply)
+		update_models(board_data)
+	except KeyboardInterrupt:
+		worker.kill()
+		break
