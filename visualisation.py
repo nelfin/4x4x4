@@ -30,11 +30,12 @@ GRID_COLOR = color.white
 NOUGHTS_COLOR = color.green
 CROSSES_COLOR = color.red
 DOT_COLOR = color.white
+VICTORY_COLOR = color.yellow
 
 BOARD_DIMENSION = 4
 GAP_SIZE = 10
 BOARD_SIZE = GAP_SIZE * BOARD_DIMENSION
-THICKNESSS = 0.25
+THICKNESS = 0.25
 NOUGHTS_RADIUS = GAP_SIZE/3.0
 
 CROSSES_SIZE = (GAP_SIZE,1,1)
@@ -70,6 +71,13 @@ def make_cross(pos, color=CROSSES_COLOR, size=CROSSES_SIZE):
 	box(frame=cross,pos=vector(pos)*GAP_SIZE+CENTRE_OFFSET, axis=(-1,1,-1), color=color, size=size)
 	return cross
 
+#Draw a victory line from start to end
+def make_victory(start, end, color=VICTORY_COLOR, radius=THICKNESS*2):
+    start = (vector(start)*GAP_SIZE+CENTRE_OFFSET)
+    end   = (vector(end  )*GAP_SIZE+CENTRE_OFFSET)
+    curve(pos=[start, end], radius=radius, color=color)
+    
+
 #A function that combines the list into one big string we can send to the worker
 def serialize_board(data):
 	return ''.join(data)
@@ -103,9 +111,9 @@ def update_models(data):
 #Draw the grid
 grid = frame()
 (lambda spacing:(
-[box(frame=grid,pos=(x,y,0), size=(THICKNESSS,THICKNESSS,BOARD_SIZE), color=GRID_COLOR) for x in spacing for y in spacing],
-[box(frame=grid,pos=(x,0,z), size=(THICKNESSS,BOARD_SIZE,THICKNESSS), color=GRID_COLOR) for x in spacing for z in spacing],
-[box(frame=grid,pos=(0,y,z), size=(BOARD_SIZE,THICKNESSS,THICKNESSS), color=GRID_COLOR) for y in spacing for z in spacing]))(
+[box(frame=grid,pos=(x,y,0), size=(THICKNESS,THICKNESS,BOARD_SIZE), color=GRID_COLOR) for x in spacing for y in spacing],
+[box(frame=grid,pos=(x,0,z), size=(THICKNESS,BOARD_SIZE,THICKNESS), color=GRID_COLOR) for x in spacing for z in spacing],
+[box(frame=grid,pos=(0,y,z), size=(BOARD_SIZE,THICKNESS,THICKNESS), color=GRID_COLOR) for y in spacing for z in spacing]))(
 linspace(-BOARD_SIZE/2.0,BOARD_SIZE/2.0,BOARD_DIMENSION+1))
 
 #Also set up the squares format that we can switch to later
@@ -126,6 +134,10 @@ for x in range(0,BOARD_DIMENSION):
 			board_models.append( make_dot(pos=(x,y,z)) )
 			
 
+make_victory((0,0,0),(0,0,3))
+make_victory((1,0,0),(1,3,0))
+make_victory((2,0,0),(2,3,0))
+make_victory((3,0,0),(3,0,3))
 
 #The main loop
 while True:
