@@ -22,8 +22,8 @@ def shutdown():
 FPS = 60
 
 DATA_EMPTY='e'
-DATA_NOUGHT='x'
-DATA_CROSS='o'
+DATA_CROSS='x'
+DATA_NOUGHT='o'
 
 #Drawing constants
 GRID_COLOR = color.white
@@ -97,17 +97,16 @@ def update_models(data):
 				board_models[coords_to_index(x,y,z)].visible = False
 				del board_models[coords_to_index(x,y,z)]
 				
-				if	 state=='e' :
+				if state == DATA_EMPTY:
 					board_models.insert(coords_to_index(x,y,z), make_dot(pos=(x,y,z)) )
-				elif state=='x' :
+				elif state == DATA_CROSS:
 					board_models.insert(coords_to_index(x,y,z), make_cross(pos=(x,y,z)) )
-				elif state=='o' :
+				elif state == DATA_NOUGHT:
 					board_models.insert(coords_to_index(x,y,z), make_nought(pos=(x,y,z)) )
 				
 				
 	return
 
-	
 #Draw the grid
 grid = frame()
 (lambda spacing:(
@@ -139,6 +138,9 @@ make_victory((1,0,0),(1,3,0))
 make_victory((2,0,0),(2,3,0))
 make_victory((3,0,0),(3,0,3))
 
+def place((x, y, z), mark):
+	board_data[coords_to_index(x, y, z)] = mark
+
 #The main loop
 while True:
 	try:
@@ -160,8 +162,22 @@ while True:
 		#Input loop
 		reply = send_worker_message(serialize_board(board_data))
 		print "[visual] read board state:",reply," from worker\n"
-
 		board_data = list(reply)
+		update_models(board_data)
+
+		while True:
+			cmd = raw_input("[visual] Enter space-separated coordinates>>> ")
+			if cmd == "quit":
+				sys.exit()
+			try:
+				x, y, z = map(int, cmd.split())
+			except ValueError:
+				print "[visual] Please enter 3 values"
+				continue
+			if board_data[coords_to_index(x, y, z)] == DATA_EMPTY:
+				place((x, y, z), DATA_NOUGHT)
+				break
+
 		update_models(board_data)
 	except KeyboardInterrupt:
 		worker.kill()
