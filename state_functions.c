@@ -2,8 +2,17 @@
 
 // globals
 char computer = CROSSES; //CROSSES is trying to maximize. CROSSES plays first
-state initial_state = {{{EMPTY}}};
+state initial_state = {
+    {{{EMPTY}}},
+    {-1},
+    0
+};
 const unsigned char display[3] = {' ', 'O', 'X'};
+
+void clear_state(state *s) {
+    s->move_number = 0;
+    memset(&(s->board), EMPTY, SQUARES*sizeof(unsigned char));
+}
 
 void pick_demo() {
     pick_next(initial_state, computer, 2);
@@ -44,7 +53,7 @@ void prettyprint_state (state s) {
         for(y=0; y<BOARD_DIMENSION; y++) {
             fprintf(stderr,"[");
             for(z=0; z<BOARD_DIMENSION; z++)
-                fprintf(stderr,"%c,", display[s[x][y][z]]);
+                fprintf(stderr,"%c,", display[s.board[x][y][z]]);
             fprintf(stderr,"\b]");
             }
         fprintf(stderr,"\n");
@@ -69,7 +78,9 @@ void prettyprint_position_values (position_values s) {
 
 // Generate a deep copy of a state
 void replicate(state s, char player, state *dest) {
-    memcpy(dest, s, sizeof(*dest));
+    dest->move_number = s.move_number;
+    memcpy(&(dest->moves), s.moves, SQUARES*sizeof(int));
+    memcpy(&(dest->board), s.board, SQUARES*sizeof(unsigned char));
 }
 
 // Check victory conditions of a state. returns:
@@ -80,7 +91,7 @@ void replicate(state s, char player, state *dest) {
 // ASSUMES: Currently no winner, 4x4x4 board
 // (x,y,z) = last move made.
 char victory(state s, int x, int y, int z) {
-    char player = s[x][y][z];
+    char player = s.board[x][y][z];
     if (!player) return EMPTY;
     int vary;
     int line1 = 1;
@@ -88,49 +99,49 @@ char victory(state s, int x, int y, int z) {
     int line3 = 1;
 
     /* ALTERNATIVE METHOD... POTENTAILLY LESS EFFICIENT
-    int lines[13] = {1,1,1,1,1,1,1,1,1,1,1,1,1}
+    int lines.board[13] = {1,1,1,1,1,1,1,1,1,1,1,1,1}
     for (vary=0; vary<BOARD_DIMENSION; vary++) {
-        line[0]  *= s[x][y][vary];
-        line[1]  *= s[x][vary][z];
-        line[2]  *= s[vary][y][z];
-        line[3]  *= s[x][vary][vary];
-        line[4]  *= s[vary][y][vary];
-        line[5]  *= s[vary][vary][z];
-        line[6]  *= s[x][3-vary][vary];
-        line[7]  *= s[3-vary][y][vary];
-        line[8]  *= s[3-vary][vary][z];
-        line[9]  *= s[vary][vary][vary];
-        line[10] *= s[3-vary][vary][vary];
-        line[11] *= s[vary][3-vary][vary];
-        line[12] *= s[vary][vary][3-vary];
+        line[0]  *= s.board[x][y][vary];
+        line[1]  *= s.board[x][vary][z];
+        line[2]  *= s.board[vary][y][z];
+        line[3]  *= s.board[x][vary][vary];
+        line[4]  *= s.board[vary][y][vary];
+        line[5]  *= s.board[vary][vary][z];
+        line[6]  *= s.board[x][3-vary][vary];
+        line[7]  *= s.board[3-vary][y][vary];
+        line[8]  *= s.board[3-vary][vary][z];
+        line[9]  *= s.board[vary][vary][vary];
+        line[10] *= s.board[3-vary][vary][vary];
+        line[11] *= s.board[vary][3-vary][vary];
+        line[12] *= s.board[vary][vary][3-vary];
     }
-    for (i=0; i<13; i++) if (lines[i] == NOUGHTS || lines[i] == 16) return player;*/
+    for (i=0; i<13; i++) if (lines.board[i] == NOUGHTS || lines.board[i] == 16) return player;*/
 
     //FLAT LINES (through (x,y,z))
     for (vary=0; vary<BOARD_DIMENSION; vary++) {
-        line1 *= s[x][y][vary];
-        line2 *= s[x][vary][z];
-        line3 *= s[vary][y][z];}
+        line1 *= s.board[x][y][vary];
+        line2 *= s.board[x][vary][z];
+        line3 *= s.board[vary][y][z];}
     if (line1 == NOUGHTS || line1 == 16 || //TODO: CROSSES^BOARD_DIMENSION
         line2 == NOUGHTS || line2 == 16 ||
         line3 == NOUGHTS || line3 == 16) return player;
 
-    //EVEN DIAGONALS (through slices containing (x,y,z))
+    //EVEN DIAGONALS (through s.boardlices.board containing (x,y,z))
     line1 = line2 = line3 = 1;
     for (vary=0; vary<BOARD_DIMENSION; vary++) {
-        line1 *= s[x][vary][vary];
-        line2 *= s[vary][y][vary];
-        line3 *= s[vary][vary][z];}
+        line1 *= s.board[x][vary][vary];
+        line2 *= s.board[vary][y][vary];
+        line3 *= s.board[vary][vary][z];}
     if (line1 == NOUGHTS || line1 == 16 ||
         line2 == NOUGHTS || line2 == 16 ||
         line3 == NOUGHTS || line3 == 16) return player;
 
-    //ODD DIAGONALS (through slices containing (x,y,z))
+    //ODD DIAGONALS (through s.boardlices.board containing (x,y,z))
     line1 = line2 = line3 = 1;
     for (vary=0; vary<BOARD_DIMENSION; vary++) {
-        line1 *= s[x][3-vary][vary]; //Should probably use (BOARD_DIMENSION-1)...
-        line2 *= s[3-vary][y][vary];
-        line3 *= s[3-vary][vary][z];}
+        line1 *= s.board[x][3-vary][vary]; //Should probably us.boarde (BOARD_DIMENSION-1)...
+        line2 *= s.board[3-vary][y][vary];
+        line3 *= s.board[3-vary][vary][z];}
     if (line1 == NOUGHTS || line1 == 16 ||
         line2 == NOUGHTS || line2 == 16 ||
         line3 == NOUGHTS || line3 == 16) return player;
@@ -139,10 +150,10 @@ char victory(state s, int x, int y, int z) {
     int line4 = 1;
     line1 = line2 = line3 = 1;
     for (vary=0; vary<BOARD_DIMENSION; vary++) {
-        line1 *= s[vary][vary][vary];
-        line2 *= s[3-vary][vary][vary];
-        line3 *= s[vary][3-vary][vary];
-        line4 *= s[vary][vary][3-vary];}
+        line1 *= s.board[vary][vary][vary];
+        line2 *= s.board[3-vary][vary][vary];
+        line3 *= s.board[vary][3-vary][vary];
+        line4 *= s.board[vary][vary][3-vary];}
     if (line1 == NOUGHTS || line1 == 16 ||
         line2 == NOUGHTS || line2 == 16 ||
         line3 == NOUGHTS || line3 == 16 ||
@@ -176,14 +187,18 @@ char get_any_victory(state s) {
 retval get_successors(state s, char player) {
     state *result = malloc(sizeof(state)*SQUARES);
     retval ret;
-    int i=0;
+    int i;
     int x,y,z;
+    for (i = 0; i < SQUARES; i++) {
+        clear_state(&result[i]);
+    }
+    i = 0;
     for(x=0; x<BOARD_DIMENSION; x++)
         for(y=0; y<BOARD_DIMENSION; y++)
             for(z=0; z<BOARD_DIMENSION; z++)
-                if (s[x][y][z] == EMPTY) {
-                    replicate(s,player,&result[i]);
-                    result[i++][x][y][z] = player;
+                if (s.board[x][y][z] == EMPTY) {
+                    replicate(s, player, &result[i]);
+                    result[i++].board[x][y][z] = player;
                     //if (victory(result[i-1])) 
                     //  {handle victory conditions, or report error state}
                 }
@@ -216,9 +231,9 @@ int score_state(state s, position_values map) {
         for(y=0; y<BOARD_DIMENSION; y++){
             for(z=0; z<BOARD_DIMENSION; z++){
                 int sign = 0;
-                if(s[x][y][z] == NOUGHTS){
+                if (s.board[x][y][z] == NOUGHTS) {
                     sign = 1;
-                }else if(s[x][y][z] == CROSSES){
+                } else if (s.board[x][y][z] == CROSSES) {
                     sign = -1;
                 }
                 int this_position_value = map[x][y][z] * sign;
@@ -236,13 +251,13 @@ char get_turn(state s){
     for(x=0; x<BOARD_DIMENSION; x++){
         for(y=0; y<BOARD_DIMENSION; y++){
             for(z=0; z<BOARD_DIMENSION; z++){
-                if (s[x][y][z]==CROSSES){
+                if (s.board[x][y][z] == CROSSES){
                     crosses_moves_ahead++;
                 }
-                if (s[x][y][z]==NOUGHTS){
+                if (s.board[x][y][z] == NOUGHTS){
                     crosses_moves_ahead--;
                 }
-                if (s[x][y][z]==INVALID){
+                if (s.board[x][y][z] == INVALID){
                     return INVALID;
                 }
             }
@@ -394,7 +409,7 @@ void copy_string_to_state(char chars[64], state output_state){
                     position_content = NOUGHTS;
                 if(position_content == INVALID)
                     fprintf(stderr,"[sf:copy_string_to_state]: error, read invalid state %c\n at %d",chars[coords_to_index(x,y,z)],coords_to_index(x,y,z));
-                output_state[x][y][z] = position_content;
+                output_state.board[x][y][z] = position_content;
             }
         }
     }
@@ -407,11 +422,11 @@ void copy_state_to_string(state input_state, char chars[64]){
         for(y=0; y<BOARD_DIMENSION; y++){
             for(z=0; z<BOARD_DIMENSION; z++){
                 char position_content = '-';//Invalid by default
-                if(input_state[x][y][z] == EMPTY) //TODO; make these representation letters more generic
+                if (input_state.board[x][y][z] == EMPTY) //TODO; make these representation letters more generic
                     position_content = 'e';
-                if(input_state[x][y][z] == CROSSES)
+                if (input_state.board[x][y][z] == CROSSES)
                     position_content = 'x';
-                if(input_state[x][y][z] == NOUGHTS)
+                if (input_state.board[x][y][z] == NOUGHTS)
                     position_content = 'o';
                 chars[coords_to_index(x,y,z)] = position_content;
             }
