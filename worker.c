@@ -1,7 +1,7 @@
 #include "state_functions.h"
 #include <unistd.h>
 #include <signal.h>
-#define DEPTH 0
+#define DEPTH 2
 
 
 int main(int argc, char *argv[])

@@ -213,8 +213,6 @@ retval get_successors(state s, char player) {
     ret.result = result;
     ret.numsucc = i;
 
-    fprintf(stderr, "[sf:get_successors] found %d successors\n", i);
-
     return ret;
 }
 
