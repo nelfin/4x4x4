@@ -77,10 +77,10 @@ void prettyprint_position_values (position_values s) {
 }
 
 // Generate a deep copy of a state
-void replicate(state s, char player, state *dest) {
-    dest->move_number = s.move_number;
-    memcpy(&(dest->moves), s.moves, SQUARES*sizeof(int));
-    memcpy(&(dest->board), s.board, SQUARES*sizeof(unsigned char));
+void replicate(state *s, char player, state *dest) {
+    dest->move_number = s->move_number;
+    memcpy(&(dest->moves), s->moves, SQUARES*sizeof(int));
+    memcpy(&(dest->board), s->board, SQUARES*sizeof(unsigned char));
 }
 
 // Check victory conditions of a state. returns:
@@ -185,27 +185,35 @@ char get_any_victory(state s) {
 
 // get valid succsessors of a state
 retval get_successors(state s, char player) {
-    state *result = malloc(sizeof(state)*SQUARES);
+    state *result = (state *) malloc(sizeof(state)*SQUARES);
     retval ret;
-    int i;
+    int i, count;
     int x,y,z;
     for (i = 0; i < SQUARES; i++) {
         clear_state(&result[i]);
+        ret.valid[i] = false;
     }
     i = 0;
-    for(x=0; x<BOARD_DIMENSION; x++)
-        for(y=0; y<BOARD_DIMENSION; y++)
-            for(z=0; z<BOARD_DIMENSION; z++)
+    count = 0;
+    for(x=0; x<BOARD_DIMENSION; x++) {
+        for(y=0; y<BOARD_DIMENSION; y++) {
+            for(z=0; z<BOARD_DIMENSION; z++) {
                 if (s.board[x][y][z] == EMPTY) {
-                    replicate(s, player, &result[i]);
-                    result[i++].board[x][y][z] = player;
+                    count++;
+                    replicate(&s, player, &result[i]);
+                    result[i].board[x][y][z] = player;
+                    ret.valid[i] = true;
                     //if (victory(result[i-1])) 
                     //  {handle victory conditions, or report error state}
                 }
+                i++;
+            }
+        }
+    }
     ret.result = result;
     ret.numsucc = i;
 
-    //fprintf(stderr, "[sf:get_successors] found %d successors\n", i);
+    fprintf(stderr, "[sf:get_successors] found %d successors\n", i);
 
     return ret;
 }
@@ -312,13 +320,17 @@ _move pick_next(state s, char player, int depth) {
     retval possible_moves;
     _move retmove;
     int i, score;
-    int best_score = (player==CROSSES)?INT_MIN:INT_MAX; //CROSSES is trying to maximize, so default for it should be INT_MIN, vice versa
+    char next_player = (player == CROSSES) ? NOUGHTS : CROSSES;
+    int best_score = INT_MIN;
     int best_move;
 
     possible_moves = get_successors(s, player);
-    for (i = 0; i < possible_moves.numsucc; i++) {
-        score = minimax(possible_moves.result[i], (player==NOUGHTS?CROSSES:NOUGHTS), INT_MIN, INT_MAX, depth);
-        if ((player==CROSSES)?(score > best_score):(score < best_score)) { //X is max, O is min
+    for (i = 0; i < SQUARES; i++) {
+        if (!possible_moves.valid[i]) {
+            continue;
+        }
+        score = minimax(possible_moves.result[i], next_player, INT_MIN, INT_MAX, depth);
+        if (score > best_score) {
             best_score = score;
             best_move = i;
         }
@@ -395,7 +407,7 @@ int coords_to_index(int x,int y,int z){
 }
 
 //Converts a character array to a state
-void copy_string_to_state(char chars[64], state output_state){
+void copy_string_to_state(char chars[64], state *output_state){
     int x,y,z;
     for(x=0; x<BOARD_DIMENSION; x++){
         for(y=0; y<BOARD_DIMENSION; y++){
@@ -409,7 +421,7 @@ void copy_string_to_state(char chars[64], state output_state){
                     position_content = NOUGHTS;
                 if(position_content == INVALID)
                     fprintf(stderr,"[sf:copy_string_to_state]: error, read invalid state %c\n at %d",chars[coords_to_index(x,y,z)],coords_to_index(x,y,z));
-                output_state.board[x][y][z] = position_content;
+                output_state->board[x][y][z] = position_content;
             }
         }
     }

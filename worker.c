@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
         
         
         
-        copy_string_to_state(read_state_string,read_state);
+        copy_string_to_state(read_state_string, &read_state);
         ply = get_successors(read_state, get_turn(read_state));
         next_move = pick_next(read_state, get_turn(read_state), DEPTH);
         
