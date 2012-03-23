@@ -1,7 +1,6 @@
 #include "state_functions.h"
 #include <unistd.h>
 #include <signal.h>
-#define DEPTH 2
 
 extern char computer;
 
