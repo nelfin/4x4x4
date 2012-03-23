@@ -103,22 +103,22 @@ char victory(state s, int x, int y, int z) {
     int lines[13] = {1,1,1,1,1,1,1,1,1,1,1,1,1};
     for (vary=0; vary<BOARD_DIMENSION; vary++) {
         //FLAT LINES (through (x,y,z))
-        lines[0]  *= s[x][y][vary];
-        lines[1]  *= s[x][vary][z];
-        lines[2]  *= s[vary][y][z];
+        lines[0]  *= s.board[x][y][vary];
+        lines[1]  *= s.board[x][vary][z];
+        lines[2]  *= s.board[vary][y][z];
         //EVEN DIAGONALS (through slices containing (x,y,z))
-        lines[3]  *= s[x][vary][vary];
-        lines[4]  *= s[vary][y][vary];
-        lines[5]  *= s[vary][vary][z];
+        lines[3]  *= s.board[x][vary][vary];
+        lines[4]  *= s.board[vary][y][vary];
+        lines[5]  *= s.board[vary][vary][z];
         //ODD DIAGONALS (through slices containing (x,y,z))
-        lines[6]  *= s[x][3-vary][vary];
-        lines[7]  *= s[3-vary][y][vary];
-        lines[8]  *= s[3-vary][vary][z];
+        lines[6]  *= s.board[x][3-vary][vary];
+        lines[7]  *= s.board[3-vary][y][vary];
+        lines[8]  *= s.board[3-vary][vary][z];
         //MAIN DIAGONALS (of whole board)
-        lines[9]  *= s[vary][vary][vary];
-        lines[10] *= s[3-vary][vary][vary];
-        lines[11] *= s[vary][3-vary][vary];
-        lines[12] *= s[vary][vary][3-vary];
+        lines[9]  *= s.board[vary][vary][vary];
+        lines[10] *= s.board[3-vary][vary][vary];
+        lines[11] *= s.board[vary][3-vary][vary];
+        lines[12] *= s.board[vary][vary][3-vary];
     }
     for (i=0; i<13; i++) if (lines[i] == NOUGHTS || lines[i] == 16) return player;
 
