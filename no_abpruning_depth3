@@ -1,0 +1,45 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 66.85      7.86     7.86 16777216     0.00     0.00  score_state
+ 19.06     10.10     2.24 17043520     0.00     0.00  victory
+  5.19     10.71     0.61       64     0.01     0.18  minimax
+  4.34     11.22     0.51 16777216     0.00     0.00  evaluate
+  3.06     11.59     0.36   266305     0.00     0.00  get_successors
+  0.60     11.66     0.07 16281345     0.00     0.00  replicate
+  0.38     11.70     0.05 17043521     0.00     0.00  clear_state
+  0.34     11.74     0.04 16781312     0.00     0.00  min
+  0.17     11.76     0.02        1     0.02    11.77  pick_next
+  0.04     11.77     0.01   266305     0.00     0.00  finalise_retval
+  0.04     11.77     0.01        1     0.01     0.01  get_turn
+  0.00     11.77     0.00   262144     0.00     0.00  max
+  0.00     11.77     0.00        1     0.00     0.00  fill_position_values
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
