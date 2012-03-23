@@ -30,10 +30,11 @@ while utilising the speed of a compiled C program.
 The core of the agent is implemented with a combination of minimax and $\alpha$-$\beta$ pruning.\\
 Board states are stored simply as a 3 dimensional array of chars; but this data is passed
 through the program as a struct including extra information such as a heuristic evaluation
-of the board. For testing purposes all code is compiled with the -g flag. This allows
+of the state. Once the minimax program reaches a fixed cut-off depth we select a state based on
+this heuristic. For testing purposes all code is compiled with the -g flag. This allows
 us to use the program \texttt{gprof} to analyse running time and total number of function calls
-(this is used to optimise and evaluate the effectiveness of $\alpha$-$\beta$ pruning).
-Modules:\\\\
+(this is used to optimise and evaluate the effectiveness of $\alpha$-$\beta$ pruning).\\\\
+Overview of Modules:\\\\
 \texttt{visualisation.py:}
 \begin{itemize}
 \item The python module which takes user input and displays the game board using VPython
@@ -54,5 +55,18 @@ evaluation functions
 \item Includes a simple victory function which checks if a player has won with a line nearby to
 the most recent move. (comprehensive victory checks are made in \texttt{visualisation.py})
 \end{itemize}
+
+\subsection*{\emph { \textmd{2. State Space for 4$\times$4$\times$4}}}
+\hrule
+\vspace{0.4cm}
+
+In the original scope of this project we had intended to examine the entire state space
+before making a move. However, the state space is in fact exceedingly large. Considering all
+possible states we have $3^{64}$, but many of these (far more than half) are illegal or unreachable.
+A mathematical paper by Oren Patashnik$^{[1]}$ points out that after 18 moves (under perfect play by player 1)
+the game will be over or in a state where every move is forced. With this in mind we can 
+consider a more reasonable upper bound on the states we must examine: 64 choose 18 = 3601688791018080.\\
+If we assume we can examine 1 state per clock cycle (a completely and utterly unreasonable assumption) it would
+still take 250 hours to search this reduced state space on a 4GHz CPU. 
 \end{multicols} 
 \end{document}
