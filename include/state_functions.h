@@ -69,6 +69,7 @@ void copy_string_to_state(char chars[SQUARES], state *output_state);
 void copy_state_to_string(state input_state, char chars[SQUARES]);
 int coords_to_index(int x,int y,int z);
 void clear_state(state *s);
+void apply(state *s, int x, int y, int z, char player);
 
 // inlines
 static inline int max(int x, int y) {

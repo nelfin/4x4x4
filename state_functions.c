@@ -469,3 +469,10 @@ void copy_state_to_string(state input_state, char chars[64]){
 }
 
 
+void apply(state *s, int x, int y, int z, char player) {
+    if (s->board[x][y][z] != EMPTY) {
+        fprintf(stderr, "[state_functions] Square (%d, %d, %d) no empty!\n", x, y, z);
+    }
+    s->board[x][y][z] = player;
+}
+

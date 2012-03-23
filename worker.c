@@ -3,6 +3,7 @@
 #include <signal.h>
 #define DEPTH 2
 
+extern char computer;
 
 int main(int argc, char *argv[])
 {
@@ -39,6 +40,7 @@ int main(int argc, char *argv[])
         send_visual_message(next_state_string);
 
         scanf("%d %d %d", &x, &y, &z);
+        apply(&read_state, x, y, z, (computer == CROSSES) ? NOUGHTS : CROSSES);
 
         finalise_retval(&ply);
         move_number++;
