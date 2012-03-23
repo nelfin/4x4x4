@@ -76,7 +76,19 @@ def make_cross(pos, color=CROSSES_COLOR, size=CROSSES_SIZE):
     box(frame=cross,pos=vector(pos)*GAP_SIZE+CENTRE_OFFSET, axis=(1,1,1), color=color, size=size)
     box(frame=cross,pos=vector(pos)*GAP_SIZE+CENTRE_OFFSET, axis=(-1,1,-1), color=color, size=size)
     return cross
-
+def make_axis():
+	axis_offset = GAP_SIZE
+	axis_position = (-0.5*BOARD_SIZE-axis_offset,-0.5*BOARD_SIZE,-0.5*BOARD_SIZE-axis_offset)
+	y_label_position = (-0.5*BOARD_SIZE-axis_offset,0,-0.5*BOARD_SIZE-axis_offset)
+	x_label_position = (0-axis_offset,-0.5*BOARD_SIZE,-0.5*BOARD_SIZE-axis_offset)
+	z_label_position = (-0.5*BOARD_SIZE-axis_offset,-0.5*BOARD_SIZE,0-axis_offset)
+	label(pos=x_label_position, text='X axis',box=False,height=10,color=color.red)
+	label(pos=y_label_position, text='Y axis',box=False,height=10,color=color.orange)
+	label(pos=z_label_position, text='Z axis',box=False,height=10,color=color.yellow)
+	arrow(pos=axis_position, axis=(BOARD_SIZE/2,0,0), shaftwidth=0.1,color=color.red)
+	arrow(pos=axis_position, axis=(0,BOARD_SIZE/2,0), shaftwidth=0.1,color=color.orange)
+	arrow(pos=axis_position, axis=(0,0,BOARD_SIZE/2), shaftwidth=0.1,color=color.yellow)
+     
 #Draw a victory line from start to end
 def make_victory(start, end, color=VICTORY_COLOR, radius=THICKNESS*2):
     start = (vector(start)*GAP_SIZE+CENTRE_OFFSET)
@@ -242,7 +254,8 @@ grid = frame()
 [box(frame=grid,pos=(x,0,z), size=(THICKNESS,BOARD_SIZE,THICKNESS), color=GRID_COLOR) for x in spacing for z in spacing],
 [box(frame=grid,pos=(0,y,z), size=(BOARD_SIZE,THICKNESS,THICKNESS), color=GRID_COLOR) for y in spacing for z in spacing]))(
 linspace(-BOARD_SIZE/2.0,BOARD_SIZE/2.0,BOARD_DIMENSION+1))
-
+#Draw the axis
+make_axis()
 #Also set up the squares format that we can switch to later
 squares = frame()
 for level in range(0,BOARD_DIMENSION):
