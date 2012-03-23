@@ -11,6 +11,9 @@ const unsigned char display[3] = {' ', 'O', 'X'};
 
 void clear_state(state *s) {
     s->move_number = 0;
+    s->most_recent_x = 0;
+    s->most_recent_y = 0;
+    s->most_recent_z = 0;
     memset(&(s->board), EMPTY, SQUARES*sizeof(unsigned char));
 }
 
@@ -95,7 +98,11 @@ void replicate(state *s, state *dest) {
 // INVALID: multiple winners; error condition TODO
 // ASSUMES: Currently no winner, 4x4x4 board
 // (x,y,z) = last move made.
-char victory(state s, int x, int y, int z) {
+char victory(state s) {
+	int x = s.most_recent_x;
+	int y = s.most_recent_y;
+	int z = s.most_recent_z;
+	
     char player = s.board[x][y][z];
     if (!player) return EMPTY;
     int vary, i;
@@ -177,12 +184,13 @@ char victory(state s, int x, int y, int z) {
 //CROSSES: X winner
 //NOUGHTS: O winner
 char get_any_victory(state s) {
+	fprintf(stderr,"[worker] Warning: get_any_victory should not be used, use victory instead\n");
     int x,y,z;
     char winner=EMPTY;
     for(x=0; x<BOARD_DIMENSION; x++){
         for(y=0; y<BOARD_DIMENSION; y++){
             for(z=0; z<BOARD_DIMENSION; z++){
-                winner = victory(s,x,y,z);
+                winner = victory(s);
                 if(winner != EMPTY && winner != INVALID){
                     return winner;
                 }
@@ -211,6 +219,10 @@ retval get_successors(state s, char player) {
                     count++;
                     replicate(&s, &result[i]);
                     result[i].board[x][y][z] = player;
+                    //States carry the most recently played move with them for the victory function
+                    result[i].most_recent_x = x;
+                    result[i].most_recent_y = y;
+                    result[i].most_recent_z = z;
                     result[i].move_number++;
                     result[i].moves[result[i].move_number] = i;
                     ret.valid[i] = true;
@@ -229,7 +241,7 @@ retval get_successors(state s, char player) {
 
 
 int evaluate(state s, char player) {
-    char winner = get_any_victory(s);
+    char winner = victory(s);
     if(winner!=EMPTY){
         return (winner==CROSSES)?WIN_SCORE:-WIN_SCORE;
     }else{
@@ -364,7 +376,7 @@ int minimax(state s, char player, int alpha, int beta, int depth) {
 
     next_player = (player == CROSSES) ? NOUGHTS : CROSSES;
 
-    if (depth <= 0 || get_any_victory(s) != EMPTY) { //TODO this should only need to check based on the latest move
+    if (depth <= 0 || victory(s) != EMPTY) { //TODO this should only need to check based on the latest move
         return evaluate(s, player);
     }
 

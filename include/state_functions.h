@@ -21,6 +21,9 @@ typedef struct _state {
     unsigned char board[SIDE][SIDE][SIDE];
     int moves[SQUARES];
     int move_number;
+    int most_recent_x;
+    int most_recent_y;
+    int most_recent_z;
 } state;
 
 typedef struct {
@@ -42,7 +45,7 @@ typedef struct _retval {
 void prettyprint_state (state s);
 void prettyprint_position_values (position_values s);
 void replicate(state *s, state *dest);
-char victory(state s, int x, int y, int z);
+char victory(state s);
 char get_any_victory(state s);
 
 retval get_successors(state s, char player);
