@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <stdbool.h>
 
 #define BOARD_DIMENSION 4
 #define SIDE BOARD_DIMENSION
@@ -15,29 +16,29 @@
 #define INVALID 3
 #define WIN_VALUE 
 
-typedef struct {
+typedef struct _state {
     unsigned char board[SIDE][SIDE][SIDE];
-    int cross_score;
-    int nought_score;
-} _state;
+    int moves[SQUARES];
+    int move_number;
+} state;
 
 typedef struct {
     int position;
     int score;
 } _move;
 
-typedef unsigned char state[BOARD_DIMENSION][BOARD_DIMENSION][BOARD_DIMENSION];
 typedef int position_values[BOARD_DIMENSION][BOARD_DIMENSION][BOARD_DIMENSION];
 
 typedef struct _retval {
     state *result;
+    bool valid[SQUARES];
     int numsucc;
 } retval;
 
 // prototypes
 void prettyprint_state (state s);
 void prettyprint_position_values (position_values s);
-void replicate(state s, char player, state *dest);
+void replicate(state *s, state *dest);
 char victory(state s, int x, int y, int z);
 char get_any_victory(state s);
 
@@ -56,9 +57,10 @@ void succ_demo();
 
 // State I/O
 void send_visual_message(char message[SQUARES]);
-void copy_string_to_state(char chars[SQUARES], state output_state);
+void copy_string_to_state(char chars[SQUARES], state *output_state);
 void copy_state_to_string(state input_state, char chars[SQUARES]);
 int coords_to_index(int x,int y,int z);
+void clear_state(state *s);
 
 // inlines
 static inline int max(int x, int y) {

@@ -297,7 +297,7 @@ while True:
         check_game_over(PLAYER_GAME_OVER_TEXT)
     
         #Input loop
-        reply = send_worker_message(serialize_board(board_data))
+        reply = send_worker_message(" ".join(map(str, [x, y, z])))
         print "[visual] read board state:",reply," from worker\n"
         board_data = list(reply)
         update_models(board_data)
