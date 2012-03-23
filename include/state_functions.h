@@ -14,7 +14,8 @@
 #define NOUGHTS 1
 #define CROSSES 2
 #define INVALID 3
-#define WIN_VALUE 
+#define MAX_STATIC_SCORE ((3*BOARD_DIMENSION*BOARD_DIMENSION) + 3*BOARD_DIMENSION*2)*BOARD_DIMENSION
+#define WIN_SCORE MAX_STATIC_SCORE+1 //As long as this is greater than the maximum static value (304 = BOARD_DIMENSION * Number of victory lines)
 
 typedef struct _state {
     unsigned char board[SIDE][SIDE][SIDE];
@@ -35,6 +36,8 @@ typedef struct _retval {
     int numsucc;
 } retval;
 
+
+
 // prototypes
 void prettyprint_state (state s);
 void prettyprint_position_values (position_values s);
@@ -48,8 +51,10 @@ _move pick_next(state s, char player, int depth);
 int minimax(state s, char player, int alpha, int beta, int depth);
 int evaluate(state s, char player);
 void fill_position_values(position_values scoremap);
-int score_state(state s, position_values map);
 char get_turn(state s);
+int score_state(state s, position_values map);
+//For the score_state function, filled in worker.c
+position_values map;
 
 
 void pick_demo();

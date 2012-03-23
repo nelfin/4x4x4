@@ -231,9 +231,9 @@ retval get_successors(state s, char player) {
 int evaluate(state s, char player) {
     char winner = get_any_victory(s);
     if(winner!=EMPTY){
-        return (winner==CROSSES)?1:-1;
+        return (winner==CROSSES)?WIN_SCORE:-WIN_SCORE;
     }else{
-        return 0;
+        return score_state(s,map);
     }
 }
 

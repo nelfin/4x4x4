@@ -8,7 +8,6 @@ int main(int argc, char *argv[])
 {
     int move_number = 0;
     
-    position_values map;
     fill_position_values(map);
 
     state read_state;
