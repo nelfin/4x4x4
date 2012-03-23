@@ -19,19 +19,19 @@ int main(int argc, char *argv[])
     int x, y, z;
     clear_state(&read_state);
 
-    // XXX: fix this thing.
+    // XXX: fix this thing
     scanf("%d %d %d", &x, &y, &z);
 
     while (1)
     {
         //copy_string_to_state(read_state_string, &read_state);
         prettyprint_state(read_state);
-        ply = get_successors(read_state, get_turn(read_state));
+        //ply = get_successors(read_state, get_turn(read_state));
         next_move = pick_next(read_state, get_turn(read_state), DEPTH);
         
         
-        replicate(&read_state, &ply.result[next_move.position]);
-        copy_state_to_string(ply.result[next_move.position],next_state_string); // Just pick the first as a test
+        replicate(&read_state, &next_move.current);
+        copy_state_to_string(next_move.current, next_state_string); // Just pick the first as a test
         
         
         
