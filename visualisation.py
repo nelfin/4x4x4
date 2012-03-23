@@ -51,6 +51,8 @@ board_models = list()
 grid_visible = True
 dots_visible = False
 
+scene.stereo = 'redcyan'
+
 #Sends the worker a message and waits for it's reply
 def send_worker_message(message):
     worker.stdin.write(message+"\n")

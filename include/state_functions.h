@@ -16,6 +16,8 @@
 #define INVALID 3
 #define MAX_STATIC_SCORE ((3*BOARD_DIMENSION*BOARD_DIMENSION) + 3*BOARD_DIMENSION*2)*BOARD_DIMENSION
 #define WIN_SCORE MAX_STATIC_SCORE+1 //As long as this is greater than the maximum static value (304 = BOARD_DIMENSION * Number of victory lines)
+#define CROSSES_WIN 16
+#define NOUGHTS_WIN NOUGHTS
 
 typedef struct _state {
     unsigned char board[SIDE][SIDE][SIDE];
@@ -27,6 +29,7 @@ typedef struct _state {
 } state;
 
 typedef struct {
+    state current;
     int position;
     int score;
 } _move;
@@ -69,6 +72,7 @@ void copy_string_to_state(char chars[SQUARES], state *output_state);
 void copy_state_to_string(state input_state, char chars[SQUARES]);
 int coords_to_index(int x,int y,int z);
 void clear_state(state *s);
+void apply(state *s, int x, int y, int z, char player);
 
 // inlines
 static inline int max(int x, int y) {

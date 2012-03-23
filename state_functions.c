@@ -106,6 +106,7 @@ char victory(state s) {
     char player = s.board[x][y][z];
     if (!player) return EMPTY;
     int vary, i;
+    int invert = BOARD_DIMENSION - 1;
 
     int lines[13] = {1,1,1,1,1,1,1,1,1,1,1,1,1};
     for (vary=0; vary<BOARD_DIMENSION; vary++) {
@@ -118,16 +119,16 @@ char victory(state s) {
         lines[4]  *= s.board[vary][y][vary];
         lines[5]  *= s.board[vary][vary][z];
         //ODD DIAGONALS (through slices containing (x,y,z))
-        lines[6]  *= s.board[x][3-vary][vary];
-        lines[7]  *= s.board[3-vary][y][vary];
-        lines[8]  *= s.board[3-vary][vary][z];
+        lines[6]  *= s.board[x][invert-vary][vary];
+        lines[7]  *= s.board[invert-vary][y][vary];
+        lines[8]  *= s.board[invert-vary][vary][z];
         //MAIN DIAGONALS (of whole board)
         lines[9]  *= s.board[vary][vary][vary];
-        lines[10] *= s.board[3-vary][vary][vary];
-        lines[11] *= s.board[vary][3-vary][vary];
-        lines[12] *= s.board[vary][vary][3-vary];
+        lines[10] *= s.board[invert-vary][vary][vary];
+        lines[11] *= s.board[vary][invert-vary][vary];
+        lines[12] *= s.board[vary][vary][invert-vary];
     }
-    for (i=0; i<13; i++) if (lines[i] == NOUGHTS || lines[i] == 16) return player;
+    for (i=0; i<13; i++) if (lines[i] == NOUGHTS_WIN || lines[i] == CROSSES_WIN) return player;
 
     /*
     int line1 = 1;
@@ -362,10 +363,11 @@ _move pick_next(state s, char player, int depth) {
         //fprintf(stderr,"Best score: %i Best move: %i\n",best_score,best_move);
     }
     
-    finalise_retval(&possible_moves);
-
+    retmove.current = possible_moves.result[best_move];
     retmove.position = best_move;
     retmove.score = best_score;
+    
+    finalise_retval(&possible_moves);
     return retmove;
 }
 
@@ -468,4 +470,11 @@ void copy_state_to_string(state input_state, char chars[64]){
     }
 }
 
+
+void apply(state *s, int x, int y, int z, char player) {
+    if (s->board[x][y][z] != EMPTY) {
+        fprintf(stderr, "[state_functions] Square (%d, %d, %d) no empty!\n", x, y, z);
+    }
+    s->board[x][y][z] = player;
+}
 
