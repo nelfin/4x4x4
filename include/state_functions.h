@@ -37,7 +37,7 @@ typedef struct _retval {
 // prototypes
 void prettyprint_state (state s);
 void prettyprint_position_values (position_values s);
-void replicate(state *s, char player, state *dest);
+void replicate(state *s, state *dest);
 char victory(state s, int x, int y, int z);
 char get_any_victory(state s);
 

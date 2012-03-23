@@ -49,6 +49,11 @@ void succ_demo() {
 // Debug printer for states
 void prettyprint_state (state s) {
     int x,y,z;
+    fprintf(stderr, "Move # %d\t", s.move_number);
+    for (x = 0; x < s.move_number; x++) {
+        fprintf(stderr, "%2d ", s.moves[x]);
+    }
+    fprintf(stderr, "\n");
     for(x=0; x<BOARD_DIMENSION; x++) {
         for(y=0; y<BOARD_DIMENSION; y++) {
             fprintf(stderr,"[");
@@ -77,7 +82,7 @@ void prettyprint_position_values (position_values s) {
 }
 
 // Generate a deep copy of a state
-void replicate(state *s, char player, state *dest) {
+void replicate(state *s, state *dest) {
     dest->move_number = s->move_number;
     memcpy(&(dest->moves), s->moves, SQUARES*sizeof(int));
     memcpy(&(dest->board), s->board, SQUARES*sizeof(unsigned char));
@@ -200,8 +205,10 @@ retval get_successors(state s, char player) {
             for(z=0; z<BOARD_DIMENSION; z++) {
                 if (s.board[x][y][z] == EMPTY) {
                     count++;
-                    replicate(&s, player, &result[i]);
+                    replicate(&s, &result[i]);
                     result[i].board[x][y][z] = player;
+                    result[i].move_number++;
+                    result[i].moves[result[i].move_number] = i;
                     ret.valid[i] = true;
                     //if (victory(result[i-1])) 
                     //  {handle victory conditions, or report error state}

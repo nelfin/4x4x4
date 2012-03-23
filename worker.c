@@ -21,27 +21,21 @@ int main(int argc, char *argv[])
 
     while (1)
     {
-    
-        scanf("%s", read_state_string);
-        
-        //Printing to stderr will show output on the terminal window. Use this to write debug messages in the terminal
-        fprintf(stderr,"[worker] received board state: %s from visualiser\n",read_state_string);
-        
-        
-        
-        copy_string_to_state(read_state_string, &read_state);
+        //copy_string_to_state(read_state_string, &read_state);
+        prettyprint_state(read_state);
         ply = get_successors(read_state, get_turn(read_state));
         next_move = pick_next(read_state, get_turn(read_state), DEPTH);
         
         
+        replicate(&read_state, &ply.result[next_move.position]);
         copy_state_to_string(ply.result[next_move.position],next_state_string); // Just pick the first as a test
         
         
         
-        //Pause
-        sleep(1);
         fprintf(stderr,"[worker] %s output sending\n",next_state_string);
         send_visual_message(next_state_string);
+
+        scanf("%s", read_state_string);
 
         finalise_retval(&ply);
         move_number++;
