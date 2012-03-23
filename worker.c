@@ -17,7 +17,11 @@ int main(int argc, char *argv[])
     retval ply;
     char read_state_string [64];
 
+    int x, y, z;
     clear_state(&read_state);
+
+    // XXX: fix this thing.
+    scanf("%d %d %d", &x, &y, &z);
 
     while (1)
     {
@@ -35,7 +39,7 @@ int main(int argc, char *argv[])
         fprintf(stderr,"[worker] %s output sending\n",next_state_string);
         send_visual_message(next_state_string);
 
-        scanf("%s", read_state_string);
+        scanf("%d %d %d", &x, &y, &z);
 
         finalise_retval(&ply);
         move_number++;
