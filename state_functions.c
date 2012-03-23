@@ -365,14 +365,10 @@ _move pick_next(state s, char player, int depth) {
         //fprintf(stderr,"Best score: %i Best move: %i\n",best_score,best_move);
     }
     
-    fprintf(stderr, "best move = %d\n", best_move);
     replicate(&possible_moves.result[best_move], &retmove.current);
-    //retmove.current = possible_moves.result[best_move];
     retmove.position = best_move;
     retmove.score = best_score;
     
-    fprintf(stderr, "Curse your sudden but inevetible betrayal\n");
-    prettyprint_state(retmove.current);
     finalise_retval(&possible_moves);
     return retmove;
 }
