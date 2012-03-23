@@ -263,6 +263,9 @@ for x in range(0,BOARD_DIMENSION):
 
 
 #The main loop
+reply = send_worker_message("-1 -1 -1")
+board_data = list(reply)
+update_models(board_data)
 while True:
     try:
         #Keyboard interaction

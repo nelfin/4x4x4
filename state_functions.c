@@ -224,8 +224,8 @@ retval get_successors(state s, char player) {
                     result[i].most_recent_x = x;
                     result[i].most_recent_y = y;
                     result[i].most_recent_z = z;
-                    result[i].move_number++;
                     result[i].moves[result[i].move_number] = i;
+                    result[i].move_number++;
                     ret.valid[i] = true;
                     //if (victory(result[i-1])) 
                     //  {handle victory conditions, or report error state}
@@ -358,15 +358,17 @@ _move pick_next(state s, char player, int depth) {
             best_move = i;
         }
         //prettyprint_state(possible_moves.result[i]);
-        fprintf(stderr,
-                "[sf:pick_next] minimax(%02d) = %d\n", i, score);
         //fprintf(stderr,"Best score: %i Best move: %i\n",best_score,best_move);
     }
     
-    retmove.current = possible_moves.result[best_move];
+    fprintf(stderr, "best move = %d\n", best_move);
+    replicate(&possible_moves.result[best_move], &retmove.current);
+    //retmove.current = possible_moves.result[best_move];
     retmove.position = best_move;
     retmove.score = best_score;
     
+    fprintf(stderr, "Curse your sudden but inevetible betrayal\n");
+    prettyprint_state(retmove.current);
     finalise_retval(&possible_moves);
     return retmove;
 }

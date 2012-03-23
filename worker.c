@@ -29,12 +29,11 @@ int main(int argc, char *argv[])
         prettyprint_state(read_state);
         //ply = get_successors(read_state, get_turn(read_state));
         next_move = pick_next(read_state, get_turn(read_state), DEPTH);
-        
-        
-        replicate(&read_state, &next_move.current);
+        prettyprint_state(next_move.current);
+
+        replicate(&next_move.current, &read_state);
+
         copy_state_to_string(next_move.current, next_state_string); // Just pick the first as a test
-        
-        
         
         fprintf(stderr,"[worker] %s output sending\n",next_state_string);
         send_visual_message(next_state_string);
@@ -42,7 +41,7 @@ int main(int argc, char *argv[])
         scanf("%d %d %d", &x, &y, &z);
         apply(&read_state, x, y, z, (computer == CROSSES) ? NOUGHTS : CROSSES);
 
-        finalise_retval(&ply);
+        //finalise_retval(&ply);
         move_number++;
     }
     return 0;
