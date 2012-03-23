@@ -1,0 +1,58 @@
+\documentclass[10pt]{article}
+\usepackage{times}
+\usepackage[fleqn]{amsmath}
+\usepackage{amssymb}
+\usepackage{anysize}
+\usepackage{multicol}
+%\marginsize{left}{right}{top}{bottom}:
+\marginsize{2.5cm}{1.5cm}{1cm}{1cm}
+\begin{document}
+
+
+\title{COMP3130 -- Group Project in Computer Science\\ Warm-up Project -- 4$\times$4$\times$4 TicTacToe Agent}
+\date{March 23, 2012}
+\author{Andrew Haigh -- u4667010;\\ Timothy Cosgrove -- u4843619;\\ Joshua Nelson -- u4850020}
+\maketitle
+
+\setlength{\columnsep}{18.0pt}
+\begin{multicols}{2}
+\subsection*{\emph { \textmd{1. Abstract}}}
+\hrule
+\vspace{0.4cm}
+The purpose of this project was to implement an intelligent agent to play 3
+dimensional 4 by 4 by 4 Tic Tac Toe. We chose to implement this in C, with a
+pipe interface to python. This allowed us to use python's 3D libraries for visualisation
+while utilising the speed of a compiled C program.
+
+\subsection*{\emph { \textmd{2. Solution Overview}}}
+\hrule
+\vspace{0.4cm}
+The core of the agent is implemented with a combination of minimax and $\alpha$-$\beta$ pruning.\\
+Board states are stored simply as a 3 dimensional array of chars; but this data is passed
+through the program as a struct including extra information such as a heuristic evaluation
+of the board. For testing purposes all code is compiled with the -g flag. This allows
+us to use the program \texttt{gprof} to analyse running time and total number of function calls
+(this is used to optimise and evaluate the effectiveness of $\alpha$-$\beta$ pruning).
+Modules:\\\\
+\texttt{visualisation.py:}
+\begin{itemize}
+\item The python module which takes user input and displays the game board using VPython
+\item This is the main program, it creates a sub-process (\texttt{worker.c}) which returns
+board states to display
+\item Contains several visualisation options: press 'g' to switch views and 's' to enable
+red-cyan stereoscopic 3D.
+\end{itemize}
+\texttt{worker.c:}
+\begin{itemize}
+\item The link module which handles communication between python and C
+\item Calls code from \texttt{state\_functions.c} to start minimax and pick the next move
+\end{itemize}
+\texttt{state\_functions.c:}
+\begin{itemize}
+\item Contains all core functionality of the AI agent including minimax functions and state
+evaluation functions
+\item Includes a simple victory function which checks if a player has won with a line nearby to
+the most recent move. (comprehensive victory checks are made in \texttt{visualisation.py})
+\end{itemize}
+\end{multicols} 
+\end{document}
