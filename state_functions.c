@@ -213,6 +213,7 @@ int evaluate(state s, char player) {
 int score_state(state s, position_values map) {
     //Noughts winning = positive score, Crosses winning = negative score
     //Score is on a scale -304 to 304 (-4*76 to 4*76)
+    //3*4^2 + 3*4*2 + 4
     //TODO; normalize this score so it can be used in place of a victory evaluation if there is no victor
     int x,y,z;
     int score=0;

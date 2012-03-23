@@ -13,6 +13,7 @@
 #define NOUGHTS 1
 #define CROSSES 2
 #define INVALID 3
+#define WIN_VALUE 
 
 typedef struct {
     unsigned char board[SIDE][SIDE][SIDE];

@@ -84,7 +84,7 @@ def make_victory(start, end, color=VICTORY_COLOR, radius=THICKNESS*2):
 #Determines if the game is over, and if so, where the victory line is
 def game_over(data):
 
-    #All vertical victory lines
+    #All vertical victory lines (Y)
     for x in range(0,BOARD_DIMENSION):
         for z in range(0,BOARD_DIMENSION):
             possible_victor = data[coords_to_index(x,0,z)]
@@ -96,7 +96,7 @@ def game_over(data):
             if vertical_victory:
                 return (True,(x,0,z),(x,MAX_COORDINATE,z))
                 
-    #All horizontal victory lines
+    #All horizontal victory lines (X)
     for x in range(0,BOARD_DIMENSION):
         for y in range(0,BOARD_DIMENSION):
             possible_victor = data[coords_to_index(x,y,0)]
@@ -107,6 +107,18 @@ def game_over(data):
                 horizontal_victory = horizontal_victory and (data[coords_to_index(x,y,z)]==possible_victor)
             if horizontal_victory:
                 return (True,(x,y,0),(x,y,MAX_COORDINATE))
+                
+    #All depth victory lines (Z)
+    for y in range(0,BOARD_DIMENSION):
+        for z in range(0,BOARD_DIMENSION):
+            possible_victor = data[coords_to_index(0,y,z)]
+            depth_victory = True
+            if possible_victor==DATA_EMPTY:
+                continue
+            for x in range(1,BOARD_DIMENSION):
+                horizontal_victory = horizontal_victory and (data[coords_to_index(x,y,z)]==possible_victor)
+            if horizontal_victory:
+                return (True,(0,y,z),(MAX_COORDINATE,y,z))
                 
     #All Z-slice cross lines
     for z in range(0,BOARD_DIMENSION):
