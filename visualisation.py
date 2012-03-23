@@ -13,10 +13,10 @@ worker = subprocess.Popen(['./worker'],stdin=subprocess.PIPE,stdout=subprocess.P
 from visual import *
 @atexit.register
 def shutdown():
-	global worker
-	print "[visual] shutting down"
-	worker.kill()
-	os.kill(os.getpid(), signal.SIGKILL)
+    global worker
+    print "[visual] shutting down"
+    worker.kill()
+    os.kill(os.getpid(), signal.SIGKILL)
 #atexit.register(shutdown)
 
 FPS = 60
@@ -53,27 +53,27 @@ dots_visible = False
 
 #Sends the worker a message and waits for it's reply
 def send_worker_message(message):
-	worker.stdin.write(serialize_board(board_data)+"\n")
-	worker_output = worker.stdout.read(BOARD_DIMENSION ** 3)
-	return worker_output
+    worker.stdin.write(message+"\n")
+    worker_output = worker.stdout.read(BOARD_DIMENSION ** 3)
+    return worker_output
 
 #Draw a sphere for the noughts player.
 def make_nought(pos, color=NOUGHTS_COLOR, radius=NOUGHTS_RADIUS):
-	nought = sphere(pos=vector(pos)*GAP_SIZE+CENTRE_OFFSET, color=color, radius=radius)
-	return nought
+    nought = sphere(pos=vector(pos)*GAP_SIZE+CENTRE_OFFSET, color=color, radius=radius)
+    return nought
 
 #Draw a dot for an empty space.
 def make_dot(pos, color=DOT_COLOR, radius=NOUGHTS_RADIUS/10.0):
-	dot = make_nought(pos,color,radius)
-	dot.visible = dots_visible
-	return dot
+    dot = make_nought(pos,color,radius)
+    dot.visible = dots_visible
+    return dot
 
 #Draw an X for the crosses player.
 def make_cross(pos, color=CROSSES_COLOR, size=CROSSES_SIZE):
-	cross = frame()
-	box(frame=cross,pos=vector(pos)*GAP_SIZE+CENTRE_OFFSET, axis=(1,1,1), color=color, size=size)
-	box(frame=cross,pos=vector(pos)*GAP_SIZE+CENTRE_OFFSET, axis=(-1,1,-1), color=color, size=size)
-	return cross
+    cross = frame()
+    box(frame=cross,pos=vector(pos)*GAP_SIZE+CENTRE_OFFSET, axis=(1,1,1), color=color, size=size)
+    box(frame=cross,pos=vector(pos)*GAP_SIZE+CENTRE_OFFSET, axis=(-1,1,-1), color=color, size=size)
+    return cross
 
 #Draw a victory line from start to end
 def make_victory(start, end, color=VICTORY_COLOR, radius=THICKNESS*2):
@@ -84,139 +84,143 @@ def make_victory(start, end, color=VICTORY_COLOR, radius=THICKNESS*2):
 #Determines if the game is over, and if so, where the victory line is
 def game_over(data):
 
-	#All vertical victory lines
-	for x in range(0,BOARD_DIMENSION):
-		for z in range(0,BOARD_DIMENSION):
-			possible_victor = data[coords_to_index(x,0,z)]
-			vertical_victory = True
-			if possible_victor==DATA_EMPTY:
-				continue
-			for y in range(1,BOARD_DIMENSION):
-				vertical_victory = vertical_victory and (data[coords_to_index(x,y,z)]==possible_victor)
-			if vertical_victory:
-				return (True,(x,0,z),(x,MAX_COORDINATE,z))
-				
-	#All horizontal victory lines
-	for x in range(0,BOARD_DIMENSION):
-		for y in range(0,BOARD_DIMENSION):
-			possible_victor = data[coords_to_index(x,y,0)]
-			horizontal_victory = True
-			if possible_victor==DATA_EMPTY:
-				continue
-			for z in range(1,BOARD_DIMENSION):
-				horizontal_victory = horizontal_victory and (data[coords_to_index(x,y,z)]==possible_victor)
-			if horizontal_victory:
-				return (True,(x,y,0),(x,y,MAX_COORDINATE))
-				
-	#All Z-slice cross lines
-	for z in range(0,BOARD_DIMENSION):
-		cross_victory_1 = True
-		cross_victory_2 = True
-		possible_victor_1 = data[coords_to_index(0,0,z)]
-		possible_victor_2 = data[coords_to_index(0,MAX_COORDINATE,z)]
-		if possible_victor_1==DATA_EMPTY or possible_victor_2==DATA_EMPTY:
-			continue
-		for xy in range(1,BOARD_DIMENSION):
-				cross_victory_1 = cross_victory_1 and (data[coords_to_index(xy,xy,z)]==possible_victor_1)
-				cross_victory_2 = cross_victory_2 and (data[coords_to_index(xy,MAX_COORDINATE-xy,z)]==possible_victor_2)
-		if cross_victory_1:
-			return (True,(0,0,z),(MAX_COORDINATE,MAX_COORDINATE,z))
-		if cross_victory_2:
-			return (True,(MAX_COORDINATE,0,z),(MAX_COORDINATE,0,z))
-				
-	#All X-slice cross lines
-	for x in range(0,BOARD_DIMENSION):
-		cross_victory_1 = True
-		cross_victory_2 = True
-		possible_victor_1 = data[coords_to_index(x,0,0)]
-		possible_victor_2 = data[coords_to_index(x,0,MAX_COORDINATE)]
-		if possible_victor_1==DATA_EMPTY or possible_victor_2==DATA_EMPTY:
-			continue
-		for yz in range(1,BOARD_DIMENSION):
-				cross_victory_1 = cross_victory_1 and (data[coords_to_index(x,yz,yz)]==possible_victor_1)
-				cross_victory_2 = cross_victory_2 and (data[coords_to_index(x,yz,MAX_COORDINATE-yz)]==possible_victor_2)
-		if cross_victory_1:
-			return (True,(x,0,0),(x,MAX_COORDINATE,MAX_COORDINATE))
-		if cross_victory_2:
-			return (True,(x,MAX_COORDINATE,0),(x,MAX_COORDINATE,0))
-				
-	#All Y-slice cross lines
-	for y in range(0,BOARD_DIMENSION):
-		cross_victory_1 = True
-		cross_victory_2 = True
-		possible_victor_1 = data[coords_to_index(0,y,0)]
-		possible_victor_2 = data[coords_to_index(MAX_COORDINATE,y,0)]
-		if possible_victor_1==DATA_EMPTY or possible_victor_2==DATA_EMPTY:
-			continue
-		for xz in range(1,BOARD_DIMENSION):
-				cross_victory_1 = cross_victory_1 and (data[coords_to_index(xz,y,xz)]==possible_victor_1)
-				cross_victory_2 = cross_victory_2 and (data[coords_to_index(MAX_COORDINATE-xz,y,xz)]==possible_victor_2)
-		if cross_victory_1:
-			return (True,(0,0,z),(MAX_COORDINATE,MAX_COORDINATE,z))
-		if cross_victory_2:
-			return (True,(MAX_COORDINATE,0,z),(0,MAX_COORDINATE,z))
-	#The 4 corner diagonals
-	corner_1_victory = True
-	corner_1_mark = data[coords_to_index(0,0,0)]
-	corner_2_victory = True
-	corner_2_mark = data[coords_to_index(MAX_COORDINATE,0,0)]
-	corner_3_victory = True
-	corner_3_mark = data[coords_to_index(0,MAX_COORDINATE,0)]
-	corner_4_victory = True
-	corner_4_mark = data[coords_to_index(MAX_COORDINATE,MAX_COORDINATE,0)]
-	for vary in range(0,BOARD_DIMENSION):
-		corner_1_victory = corner_1_victory and (data[coords_to_index(vary,vary,vary)] == corner_1_mark)
-		corner_2_victory = corner_2_victory and (data[coords_to_index(MAX_COORDINATE-vary,vary,vary)] == corner_2_mark)
-		corner_3_victory = corner_3_victory and (data[coords_to_index(vary,MAX_COORDINATE-vary,vary)] == corner_3_mark)
-		corner_4_victory = corner_4_victory and (data[coords_to_index(MAX_COORDINATE-vary,MAX_COORDINATE-vary,vary)] == corner_4_mark)
-	if corner_1_victory and (corner_1_mark != DATA_EMPTY):
-		return (True,(0,0,0),(MAX_COORDINATE,MAX_COORDINATE,MAX_COORDINATE))
-	if corner_2_victory and (corner_2_mark != DATA_EMPTY):
-		return (True,(MAX_COORDINATE,0,0),(MAX_COORDINATE,MAX_COORDINATE,MAX_COORDINATE))
-	if corner_3_victory and (corner_3_mark != DATA_EMPTY):
-		return (True,(0,MAX_COORDINATE,0),(MAX_COORDINATE,0,MAX_COORDINATE))
-	if corner_4_victory and (corner_4_mark != DATA_EMPTY):
-		return (True,(MAX_COORDINATE,MAX_COORDINATE,0),(0,0,MAX_COORDINATE))
-	#Game is not over
-	return (False,(0,0,0),(0,0,0))
-				
+    #All vertical victory lines
+    for x in range(0,BOARD_DIMENSION):
+        for z in range(0,BOARD_DIMENSION):
+            possible_victor = data[coords_to_index(x,0,z)]
+            vertical_victory = True
+            if possible_victor==DATA_EMPTY:
+                continue
+            for y in range(1,BOARD_DIMENSION):
+                vertical_victory = vertical_victory and (data[coords_to_index(x,y,z)]==possible_victor)
+            if vertical_victory:
+                return (True,(x,0,z),(x,MAX_COORDINATE,z))
+                
+    #All horizontal victory lines
+    for x in range(0,BOARD_DIMENSION):
+        for y in range(0,BOARD_DIMENSION):
+            possible_victor = data[coords_to_index(x,y,0)]
+            horizontal_victory = True
+            if possible_victor==DATA_EMPTY:
+                continue
+            for z in range(1,BOARD_DIMENSION):
+                horizontal_victory = horizontal_victory and (data[coords_to_index(x,y,z)]==possible_victor)
+            if horizontal_victory:
+                return (True,(x,y,0),(x,y,MAX_COORDINATE))
+                
+    #All Z-slice cross lines
+    for z in range(0,BOARD_DIMENSION):
+        cross_victory_1 = True
+        cross_victory_2 = True
+        possible_victor_1 = data[coords_to_index(0,0,z)]
+        possible_victor_2 = data[coords_to_index(0,MAX_COORDINATE,z)]
+        if possible_victor_1==DATA_EMPTY or possible_victor_2==DATA_EMPTY:
+            continue
+        for xy in range(1,BOARD_DIMENSION):
+                cross_victory_1 = cross_victory_1 and (data[coords_to_index(xy,xy,z)]==possible_victor_1)
+                cross_victory_2 = cross_victory_2 and (data[coords_to_index(xy,MAX_COORDINATE-xy,z)]==possible_victor_2)
+        if cross_victory_1:
+            return (True,(0,0,z),(MAX_COORDINATE,MAX_COORDINATE,z))
+        if cross_victory_2:
+            return (True,(MAX_COORDINATE,0,z),(MAX_COORDINATE,0,z))
+                
+    #All X-slice cross lines
+    for x in range(0,BOARD_DIMENSION):
+        cross_victory_1 = True
+        cross_victory_2 = True
+        possible_victor_1 = data[coords_to_index(x,0,0)]
+        possible_victor_2 = data[coords_to_index(x,0,MAX_COORDINATE)]
+        if possible_victor_1==DATA_EMPTY or possible_victor_2==DATA_EMPTY:
+            continue
+        for yz in range(1,BOARD_DIMENSION):
+                cross_victory_1 = cross_victory_1 and (data[coords_to_index(x,yz,yz)]==possible_victor_1)
+                cross_victory_2 = cross_victory_2 and (data[coords_to_index(x,yz,MAX_COORDINATE-yz)]==possible_victor_2)
+        if cross_victory_1:
+            return (True,(x,0,0),(x,MAX_COORDINATE,MAX_COORDINATE))
+        if cross_victory_2:
+            return (True,(x,MAX_COORDINATE,0),(x,MAX_COORDINATE,0))
+                
+    #All Y-slice cross lines
+    for y in range(0,BOARD_DIMENSION):
+        cross_victory_1 = True
+        cross_victory_2 = True
+        possible_victor_1 = data[coords_to_index(0,y,0)]
+        possible_victor_2 = data[coords_to_index(MAX_COORDINATE,y,0)]
+        if possible_victor_1==DATA_EMPTY or possible_victor_2==DATA_EMPTY:
+            continue
+        for xz in range(1,BOARD_DIMENSION):
+                cross_victory_1 = cross_victory_1 and (data[coords_to_index(xz,y,xz)]==possible_victor_1)
+                cross_victory_2 = cross_victory_2 and (data[coords_to_index(MAX_COORDINATE-xz,y,xz)]==possible_victor_2)
+        if cross_victory_1:
+            return (True,(0,0,z),(MAX_COORDINATE,MAX_COORDINATE,z))
+        if cross_victory_2:
+            return (True,(MAX_COORDINATE,0,z),(0,MAX_COORDINATE,z))
+    #The 4 corner diagonals
+    corner_1_victory = True
+    corner_1_mark = data[coords_to_index(0,0,0)]
+    corner_2_victory = True
+    corner_2_mark = data[coords_to_index(MAX_COORDINATE,0,0)]
+    corner_3_victory = True
+    corner_3_mark = data[coords_to_index(0,MAX_COORDINATE,0)]
+    corner_4_victory = True
+    corner_4_mark = data[coords_to_index(MAX_COORDINATE,MAX_COORDINATE,0)]
+    for vary in range(0,BOARD_DIMENSION):
+        corner_1_victory = corner_1_victory and (data[coords_to_index(vary,vary,vary)] == corner_1_mark)
+        corner_2_victory = corner_2_victory and (data[coords_to_index(MAX_COORDINATE-vary,vary,vary)] == corner_2_mark)
+        corner_3_victory = corner_3_victory and (data[coords_to_index(vary,MAX_COORDINATE-vary,vary)] == corner_3_mark)
+        corner_4_victory = corner_4_victory and (data[coords_to_index(MAX_COORDINATE-vary,MAX_COORDINATE-vary,vary)] == corner_4_mark)
+    if corner_1_victory and (corner_1_mark != DATA_EMPTY):
+        return (True,(0,0,0),(MAX_COORDINATE,MAX_COORDINATE,MAX_COORDINATE))
+    if corner_2_victory and (corner_2_mark != DATA_EMPTY):
+        return (True,(MAX_COORDINATE,0,0),(MAX_COORDINATE,MAX_COORDINATE,MAX_COORDINATE))
+    if corner_3_victory and (corner_3_mark != DATA_EMPTY):
+        return (True,(0,MAX_COORDINATE,0),(MAX_COORDINATE,0,MAX_COORDINATE))
+    if corner_4_victory and (corner_4_mark != DATA_EMPTY):
+        return (True,(MAX_COORDINATE,MAX_COORDINATE,0),(0,0,MAX_COORDINATE))
+    #Game is not over
+    return (False,(0,0,0),(0,0,0))
+                
 #Handles a possible game-over scenario
 def check_game_over(game_over_message):
-	(over, start_index, end_index) = game_over(board_data)
-	if over:
-		make_victory(start_index,end_index)
-		print "[visual]",game_over_message
-		#TODO: put exit code here
+    (over, start_index, end_index) = game_over(board_data)
+    if over:
+        make_victory(start_index,end_index)
+        print "[visual]",game_over_message
+        raw_input("Press enter to exit")
+        sys.exit(0)
 
 #A function that combines the list into one big string we can send to the worker
 def serialize_board(data):
-	return ''.join(data)
+    return ''.join(data)
 
 #Translates a board x y z coordinate into an index for our lists
 def coords_to_index(x,y,z):
-	return z+y*(BOARD_DIMENSION)+x*(BOARD_DIMENSION*BOARD_DIMENSION)
+    return z+y*(BOARD_DIMENSION)+x*(BOARD_DIMENSION*BOARD_DIMENSION)
 
 #Refreshes model list to reflect board_data
 def update_models(data):
-	for x in range(0,BOARD_DIMENSION):
-		for y in range(0,BOARD_DIMENSION):
-			for z in range(0,BOARD_DIMENSION):
-				state = data[coords_to_index(x,y,z)]
-				
-				#remove the old model
-				board_models[coords_to_index(x,y,z)].visible = False
-				del board_models[coords_to_index(x,y,z)]
-				
-				if state == DATA_EMPTY:
-					board_models.insert(coords_to_index(x,y,z), make_dot(pos=(x,y,z)) )
-				elif state == DATA_CROSS:
-					board_models.insert(coords_to_index(x,y,z), make_cross(pos=(x,y,z)) )
-				elif state == DATA_NOUGHT:
-					board_models.insert(coords_to_index(x,y,z), make_nought(pos=(x,y,z)) )
-				
-				
-	return
-
+    for x in range(0,BOARD_DIMENSION):
+        for y in range(0,BOARD_DIMENSION):
+            for z in range(0,BOARD_DIMENSION):
+                state = data[coords_to_index(x,y,z)]
+                
+                #remove the old model
+                board_models[coords_to_index(x,y,z)].visible = False
+                del board_models[coords_to_index(x,y,z)]
+                
+                if state == DATA_EMPTY:
+                    board_models.insert(coords_to_index(x,y,z), make_dot(pos=(x,y,z)) )
+                elif state == DATA_CROSS:
+                    board_models.insert(coords_to_index(x,y,z), make_cross(pos=(x,y,z)) )
+                elif state == DATA_NOUGHT:
+                    board_models.insert(coords_to_index(x,y,z), make_nought(pos=(x,y,z)) )
+                
+                
+    return
+    
+def place((x, y, z), mark):
+    board_data[coords_to_index(x, y, z)] = mark
+    
 #Draw the grid
 grid = frame()
 (lambda spacing:(
@@ -228,8 +232,8 @@ linspace(-BOARD_SIZE/2.0,BOARD_SIZE/2.0,BOARD_DIMENSION+1))
 #Also set up the squares format that we can switch to later
 squares = frame()
 for level in range(0,BOARD_DIMENSION):
-	y = level * GAP_SIZE
-	curve(frame=squares,pos=[(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0),(BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0),(BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,BOARD_SIZE/2.0),(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,BOARD_SIZE/2.0),(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0)])
+    y = level * GAP_SIZE
+    curve(frame=squares,pos=[(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0),(BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0),(BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,BOARD_SIZE/2.0),(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,BOARD_SIZE/2.0),(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0)])
 
 squares.visible = dots_visible; #only showing the squares with the dots
 
@@ -237,60 +241,56 @@ squares.visible = dots_visible; #only showing the squares with the dots
 
 #Initialise the data list and the models list
 for x in range(0,BOARD_DIMENSION):
-	for y in range(0,BOARD_DIMENSION):
-		for z in range(0,BOARD_DIMENSION):
-			board_data.append(DATA_EMPTY)
-			board_models.append( make_dot(pos=(x,y,z)) )
-			
+    for y in range(0,BOARD_DIMENSION):
+        for z in range(0,BOARD_DIMENSION):
+            board_data.append(DATA_EMPTY)
+            board_models.append( make_dot(pos=(x,y,z)) )
 
-#make_victory((0,0,0),(0,0,3))
-#make_victory((1,0,0),(1,3,0))
-#make_victory((2,0,0),(2,3,0))
-#make_victory((3,0,0),(3,0,3))
 
-def place((x, y, z), mark):
-	board_data[coords_to_index(x, y, z)] = mark
 
 #The main loop
 while True:
-	try:
-		#Keyboard interaction
-		if scene.kb.keys:
-			s = scene.kb.getkey()
-			if s=='g':
-				grid_visible = not grid_visible
-				dots_visible = not dots_visible
-		
-				grid.visible = grid_visible
-				squares.visible = dots_visible	
-				update_models(board_data);
-			if s == 'q':
-				sys.exit()
+    try:
+        #Keyboard interaction
+        if scene.kb.keys:
+            s = scene.kb.getkey()
+            if s=='g':
+                grid_visible = not grid_visible
+                dots_visible = not dots_visible
+        
+                grid.visible = grid_visible
+                squares.visible = dots_visible
+                update_models(board_data);
+            if s == 'q':
+                sys.exit()
 
-		rate(FPS);
-	
-		#Input loop
-		reply = send_worker_message(serialize_board(board_data))
-		print "[visual] read board state:",reply," from worker\n"
-		board_data = list(reply)
-		update_models(board_data)
-		check_game_over(COMPUTER_GAME_OVER_TEXT)
 
-		while True:
-			cmd = raw_input("[visual] Enter space-separated coordinates>>> ")
-			if cmd == "quit":
-				sys.exit()
-			try:
-				x, y, z = map(int, cmd.split())
-			except ValueError:
-				print "[visual] Please enter 3 values"
-				continue
-			if board_data[coords_to_index(x, y, z)] == DATA_EMPTY:
-				place((x, y, z), DATA_NOUGHT)
-				break
+        rate(FPS);
+        
+        
+        while True:
+            cmd = raw_input("[visual] Enter space-separated coordinates>>> ")
+            if cmd.startswith("q"):
+                sys.exit()
+            try:
+                x, y, z = map(int, cmd.split())
+            except ValueError:
+                print "[visual] Please enter 3 values"
+                continue
+            if board_data[coords_to_index(x, y, z)] == DATA_EMPTY:
+                place((x, y, z), DATA_NOUGHT)
+                break
+        
+        update_models(board_data)
+        check_game_over(PLAYER_GAME_OVER_TEXT)
+    
+        #Input loop
+        reply = send_worker_message(serialize_board(board_data))
+        print "[visual] read board state:",reply," from worker\n"
+        board_data = list(reply)
+        update_models(board_data)
+        check_game_over(COMPUTER_GAME_OVER_TEXT)
 
-		update_models(board_data)
-		check_game_over(PLAYER_GAME_OVER_TEXT)
-	except KeyboardInterrupt:
-		worker.kill()
-		break
+    except KeyboardInterrupt:
+        worker.kill()
+        break

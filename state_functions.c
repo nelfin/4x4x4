@@ -98,30 +98,34 @@ void replicate(state *s, state *dest) {
 char victory(state s, int x, int y, int z) {
     char player = s.board[x][y][z];
     if (!player) return EMPTY;
-    int vary;
+    int vary, i;
+
+    int lines[13] = {1,1,1,1,1,1,1,1,1,1,1,1,1};
+    for (vary=0; vary<BOARD_DIMENSION; vary++) {
+        //FLAT LINES (through (x,y,z))
+        lines[0]  *= s[x][y][vary];
+        lines[1]  *= s[x][vary][z];
+        lines[2]  *= s[vary][y][z];
+        //EVEN DIAGONALS (through slices containing (x,y,z))
+        lines[3]  *= s[x][vary][vary];
+        lines[4]  *= s[vary][y][vary];
+        lines[5]  *= s[vary][vary][z];
+        //ODD DIAGONALS (through slices containing (x,y,z))
+        lines[6]  *= s[x][3-vary][vary];
+        lines[7]  *= s[3-vary][y][vary];
+        lines[8]  *= s[3-vary][vary][z];
+        //MAIN DIAGONALS (of whole board)
+        lines[9]  *= s[vary][vary][vary];
+        lines[10] *= s[3-vary][vary][vary];
+        lines[11] *= s[vary][3-vary][vary];
+        lines[12] *= s[vary][vary][3-vary];
+    }
+    for (i=0; i<13; i++) if (lines[i] == NOUGHTS || lines[i] == 16) return player;
+
+    /*
     int line1 = 1;
     int line2 = 1;
     int line3 = 1;
-
-    /* ALTERNATIVE METHOD... POTENTAILLY LESS EFFICIENT
-    int lines.board[13] = {1,1,1,1,1,1,1,1,1,1,1,1,1}
-    for (vary=0; vary<BOARD_DIMENSION; vary++) {
-        line[0]  *= s.board[x][y][vary];
-        line[1]  *= s.board[x][vary][z];
-        line[2]  *= s.board[vary][y][z];
-        line[3]  *= s.board[x][vary][vary];
-        line[4]  *= s.board[vary][y][vary];
-        line[5]  *= s.board[vary][vary][z];
-        line[6]  *= s.board[x][3-vary][vary];
-        line[7]  *= s.board[3-vary][y][vary];
-        line[8]  *= s.board[3-vary][vary][z];
-        line[9]  *= s.board[vary][vary][vary];
-        line[10] *= s.board[3-vary][vary][vary];
-        line[11] *= s.board[vary][3-vary][vary];
-        line[12] *= s.board[vary][vary][3-vary];
-    }
-    for (i=0; i<13; i++) if (lines.board[i] == NOUGHTS || lines.board[i] == 16) return player;*/
-
     //FLAT LINES (through (x,y,z))
     for (vary=0; vary<BOARD_DIMENSION; vary++) {
         line1 *= s.board[x][y][vary];
@@ -162,7 +166,7 @@ char victory(state s, int x, int y, int z) {
     if (line1 == NOUGHTS || line1 == 16 ||
         line2 == NOUGHTS || line2 == 16 ||
         line3 == NOUGHTS || line3 == 16 ||
-        line4 == NOUGHTS || line4 == 16) return player;
+        line4 == NOUGHTS || line4 == 16) return player;*/
         
     return EMPTY;
 }
