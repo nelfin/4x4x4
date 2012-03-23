@@ -258,6 +258,7 @@ int score_state(state s, position_values map) {
     //TODO; normalize this score so it can be used in place of a victory evaluation if there is no victor
     int x,y,z;
     int score=0;
+    /*
     for(x=0; x<BOARD_DIMENSION; x++){
         for(y=0; y<BOARD_DIMENSION; y++){
             for(z=0; z<BOARD_DIMENSION; z++){
@@ -272,6 +273,7 @@ int score_state(state s, position_values map) {
             }
         }
     }
+    */
     return score;
 }
 

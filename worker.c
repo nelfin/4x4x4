@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     // XXX: fix this thing
     scanf("%d %d %d", &x, &y, &z);
 
-    while (1)
+    //while (1)
     {
         //copy_string_to_state(read_state_string, &read_state);
         prettyprint_state(read_state);

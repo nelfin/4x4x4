@@ -18,7 +18,7 @@
 #define WIN_SCORE MAX_STATIC_SCORE+1 //As long as this is greater than the maximum static value (304 = BOARD_DIMENSION * Number of victory lines)
 #define CROSSES_WIN 16
 #define NOUGHTS_WIN NOUGHTS
-#define DEPTH 2
+#define DEPTH 6
 
 typedef struct _state {
     unsigned char board[SIDE][SIDE][SIDE];
