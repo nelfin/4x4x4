@@ -4,6 +4,7 @@
 \usepackage{amssymb}
 \usepackage{anysize}
 \usepackage{multicol}
+\usepackage{graphicx}
 %\marginsize{left}{right}{top}{bottom}:
 \marginsize{2.5cm}{1.5cm}{1cm}{1cm}
 \begin{document}
@@ -34,7 +35,7 @@ of the state. Once the minimax program reaches a fixed cut-off depth we select a
 this heuristic. For testing purposes all code is compiled with the -g flag. This allows
 us to use the program \texttt{gprof} to analyse running time and total number of function calls
 (this is used to optimise and evaluate the effectiveness of $\alpha$-$\beta$ pruning).\\\\
-Overview of Modules:\\\\
+Overview of Modules:\\
 \texttt{visualisation.py:}
 \begin{itemize}
 \item The python module which takes user input and displays the game board using VPython
@@ -42,6 +43,11 @@ Overview of Modules:\\\\
 board states to display
 \item Contains several visualisation options: press 'g' to switch views and 's' to enable
 red-cyan stereoscopic 3D.
+\begin{center}
+\includegraphics[width=5.3cm]{vis.jpg}\\
+{\small Fig 1: Example of game visualisation}
+\columnbreak
+\end{center}
 \end{itemize}
 \texttt{worker.c:}
 \begin{itemize}
@@ -56,7 +62,7 @@ evaluation functions
 the most recent move. (comprehensive victory checks are made in \texttt{visualisation.py})
 \end{itemize}
 
-\subsection*{\emph { \textmd{2. State Space for 4$\times$4$\times$4}}}
+\subsection*{\emph { \textmd{3. State Space for 4$\times$4$\times$4}}}
 \hrule
 \vspace{0.4cm}
 
@@ -67,6 +73,45 @@ A mathematical paper by Oren Patashnik$^{[1]}$ points out that after 18 moves (u
 the game will be over or in a state where every move is forced. With this in mind we can 
 consider a more reasonable upper bound on the states we must examine: 64 choose 18 = 3601688791018080.\\
 If we assume we can examine 1 state per clock cycle (a completely and utterly unreasonable assumption) it would
-still take 250 hours to search this reduced state space on a 4GHz CPU. 
+still take 250 hours to search this reduced state space on a 4GHz CPU. Minimax with $\alpha$-$\beta$ pruning
+and other clever tricks could significantly reduce this figure; however it remains obvious that
+searching to depth 18 for every move is unachievable. Thus we set a depth cut-off where we stop
+searching and perform a heuristic state evaluation.
+\pagebreak
+
+\subsection*{\emph { \textmd{4. Heuristics and Cut-offs}}}
+\hrule
+\vspace{0.4cm}
+briefly explain heuristics and cut off decisions\\
+
+
+
+\subsection*{\emph { \textmd{4. Pure Minimax vs. $\alpha$-$\beta$ pruning}}}
+\hrule
+\vspace{0.4cm}
+Some tests were run using the Unix tool \texttt{gprof} to determine the effectivness
+of heuristics and $\alpha$-$\beta$ pruning. By counting the number of calls
+to our state-evaluation function we get the total number of examined leaf nodes.
+the tables below summarises the test's findings:\\\\
+Total Leaf Nodes Examined:\\\\
+\begin{tabular}{ | l | c c c | }
+  \hline                        
+  Depth & Minimax & $\alpha$-$\beta$ & $\alpha$-$\beta$ + Heuristics \\ \hline
+  3 & 16777216 & 283793 & ??? \\
+  4 & ??? & ??? & ??? \\
+  5 & ??? & ??? & ??? \\
+  \hline  
+\end{tabular}\\\\
+Total Time Taken (Seconds):\\\\
+\begin{tabular}{ | l | c c c | }
+  \hline                        
+  Depth & Minimax & $\alpha$-$\beta$ & $\alpha$-$\beta$ + Heuristics \\ \hline
+  3 & 11.7 & 0.23 & ??? \\
+  4 & ??? & ??? & ??? \\
+  5 & ??? & ??? & ??? \\
+  \hline  
+\end{tabular}
+
+
 \end{multicols} 
 \end{document}
