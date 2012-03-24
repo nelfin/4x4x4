@@ -5,6 +5,7 @@
 \usepackage{anysize}
 \usepackage{multicol}
 \usepackage{graphicx}
+\usepackage{booktabs}
 %\marginsize{left}{right}{top}{bottom}:
 \marginsize{2.5cm}{1.5cm}{1cm}{1cm}
 \begin{document}
@@ -100,23 +101,25 @@ each function and the whole program.\\
 The tables below summarise \texttt{gprof} results when the agent is making it's first move;
 run at various cut-off depths:\\\\
 Total Leaf Nodes Examined:\\\\
-\begin{tabular}{ | l | r r r | }
-  \hline                        
-  Depth & Minimax & $\alpha$-$\beta$ & $\alpha$-$\beta$ + Heuristics \\ \hline
+\begin{tabular}{  l  r r r  }
+  \toprule
+  Depth & Minimax & $\alpha$-$\beta$ & $\alpha$-$\beta$ + Heuristics \\
+  \midrule
   3 & 249984 & 8026 & ??? \\
   4 & 15249024 & 256936 & ??? \\
   5 & 914941440 & 622961 & ??? \\
   6 & 53981544960 & 16771844 & ??? \\
-  \hline  
+  \bottomrule
 \end{tabular}\\\\
 Total Time Taken (Seconds):\\\\
-\begin{tabular}{ | l | c c c | }
-  \hline                        
-  Depth & Minimax & $\alpha$-$\beta$ & $\alpha$-$\beta$ + Heuristics \\ \hline
+\begin{tabular}{ l  c c c  }
+  \toprule
+  Depth & Minimax & $\alpha$-$\beta$ & $\alpha$-$\beta$ + Heuristics \\
+  \midrule
   3 & 11.7 & 0.23 & ??? \\
   4 & ??? & ??? & ??? \\
   5 & ??? & ??? & ??? \\
-  \hline  
+  \bottomrule
 \end{tabular}\\\\
 The benefits of $\alpha$-$\beta$ pruning are obvious and indisputable, often cutting
 the number of nodes and total time by a factor of over 1500.\\
