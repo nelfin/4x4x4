@@ -387,7 +387,10 @@ int minimax(state s, char player, int alpha, int beta, int depth) {
     moves = get_successors(s, player); //next_player?
 
     if (player == computer) {
-        for (i = 0; i < moves.numsucc; i++) {
+        for (i = 0; i < SQUARES; i++) {
+            if (!moves.valid[i]) {
+                continue;
+            }
             v = minimax(moves.result[i], next_player, alpha, beta, depth-1);
             alpha = max(alpha, v);
             if (beta <= alpha) {
@@ -395,7 +398,10 @@ int minimax(state s, char player, int alpha, int beta, int depth) {
             }
         }
     } else {
-        for (i = 0; i < moves.numsucc; i++) {
+        for (i = 0; i < SQUARES; i++) {
+            if (!moves.valid[i]) {
+                continue;
+            }
             v = minimax(moves.result[i], next_player, alpha, beta, depth-1);
             beta = min(beta, v);
             if (beta <= alpha) {
