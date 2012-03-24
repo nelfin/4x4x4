@@ -9,6 +9,7 @@
 \usepackage{booktabs}
 \usepackage{titlesec}
 \usepackage{float}
+\usepackage{natbib}
 %\restylefloat{table}
 \usepackage[tableposition=top]{caption}
 % Options
@@ -79,7 +80,7 @@ the most recent move. (comprehensive victory checks are made in \texttt{visualis
 In the original scope of this project we had intended to examine the entire state space
 before making a move. However, the state space is in fact exceedingly large. Considering all
 possible states we have $3^{64}$, but many of these (far more than half) are illegal or unreachable.
-A mathematical paper by Oren Patashnik$^{[1]}$ points out that after 18 moves (under perfect play by player 1)
+According to \cite{Patashnik1980}, after 18 moves (under perfect play by player 1)
 the game will be over or in a state where every move is forced. With this in mind we can 
 consider a more reasonable upper bound on the states we must examine:
  \[\binom{64}{18} = 3601688791018080\]
@@ -148,10 +149,6 @@ potential value; taking precious CPU time.
 A Summary. Also discuss how this will prepare us for reversi (language choice,
 teamwork, gitHub)
 
-
-\subsection*{\emph { \textmd{7. Bibliography}}}
-\hrule
-\vspace{0.4cm}
-Pfft what am I; an Arts student? I don't know how to make a bibliography.
-Man I should get some sleep.
+\bibliographystyle{alpha}
+\bibliography{ai}
 \end{document}
