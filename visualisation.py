@@ -320,6 +320,9 @@ while True:
                 sys.exit()
             try:
                 x, y, z = map(int, cmd.split())
+                if (x >= BOARD_DIMENSION or y >= BOARD_DIMENSION or z >= BOARD_DIMENSION) or (x<0 or y<0 or z<0):
+                	print "[visual] Invalid coordinates, please enter values in the range 0 to",BOARD_DIMENSION-1
+                	continue
             except ValueError:
                 print "[visual] Please enter 3 values"
                 continue
