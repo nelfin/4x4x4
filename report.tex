@@ -72,7 +72,7 @@ possible states we have $3^{64}$, but many of these (far more than half) are ill
 A mathematical paper by Oren Patashnik$^{[1]}$ points out that after 18 moves (under perfect play by player 1)
 the game will be over or in a state where every move is forced. With this in mind we can 
 consider a more reasonable upper bound on the states we must examine:
- \[\binom{64}{18} = 3601688791018080\]
+{\small \[\binom{64}{18} = 3601688791018080\]}
 If we assume we can examine 1 state per clock cycle (a completely and utterly unreasonable assumption) it would
 still take 250 hours to search this reduced state space on a 4GHz CPU. Minimax with $\alpha$-$\beta$ pruning
 and other clever tricks could significantly reduce this figure; however it remains obvious that
@@ -102,17 +102,17 @@ run at various cut-off depths:\\\\
 Total Leaf Nodes Examined:\\\\
 \begin{tabular}{ | l | r r r | }
   \hline                        
-  Depth & Minimax & $\alpha$-$\beta$ & $\alpha$-$\beta$ + Heuristics \\ \hline
-  3 & 249984 & 8026 & ??? \\
-  4 & 15249024 & 256936 & ??? \\
-  5 & 914941440 & 622961 & ??? \\
-  6 & ??? & 16771844 & ??? \\
+  Depth & Minimax & $\alpha$-$\beta$ & Heuristics \\ \hline
+  3 & 249,984 & 8,026 & ??? \\
+  4 & 15,249,024 & 256,936 & ??? \\
+  5 & 914,941,440 & 622,961 & ??? \\
+  6 & 53,981,544,960 & 16,771,844 & ??? \\
   \hline  
 \end{tabular}\\\\
 Total Time Taken (Seconds):\\\\
 \begin{tabular}{ | l | c c c | }
   \hline                        
-  Depth & Minimax & $\alpha$-$\beta$ & $\alpha$-$\beta$ + Heuristics \\ \hline
+  Depth & Minimax & $\alpha$-$\beta$ & Heuristics \\ \hline
   3 & 11.7 & 0.23 & ??? \\
   4 & ??? & ??? & ??? \\
   5 & ??? & ??? & ??? \\
