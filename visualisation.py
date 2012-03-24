@@ -134,51 +134,45 @@ def game_over(data):
                 
     #All Z-slice cross lines
     for z in range(0,BOARD_DIMENSION):
-        cross_victory_1 = True
-        cross_victory_2 = True
         possible_victor_1 = data[coords_to_index(0,0,z)]
         possible_victor_2 = data[coords_to_index(0,MAX_COORDINATE,z)]
-        if possible_victor_1==DATA_EMPTY or possible_victor_2==DATA_EMPTY:
-            continue
+        cross_victory_1 = (possible_victor_1 != DATA_EMPTY)
+        cross_victory_2 = (possible_victor_2 != DATA_EMPTY)
         for xy in range(1,BOARD_DIMENSION):
                 cross_victory_1 = cross_victory_1 and (data[coords_to_index(xy,xy,z)]==possible_victor_1)
                 cross_victory_2 = cross_victory_2 and (data[coords_to_index(xy,MAX_COORDINATE-xy,z)]==possible_victor_2)
         if cross_victory_1:
             return (True,(0,0,z),(MAX_COORDINATE,MAX_COORDINATE,z))
         if cross_victory_2:
-            return (True,(MAX_COORDINATE,0,z),(MAX_COORDINATE,0,z))
+            return (True,(0,MAX_COORDINATE,z),(MAX_COORDINATE,0,z))
                 
     #All X-slice cross lines
     for x in range(0,BOARD_DIMENSION):
-        cross_victory_1 = True
-        cross_victory_2 = True
         possible_victor_1 = data[coords_to_index(x,0,0)]
         possible_victor_2 = data[coords_to_index(x,0,MAX_COORDINATE)]
-        if possible_victor_1==DATA_EMPTY or possible_victor_2==DATA_EMPTY:
-            continue
+        cross_victory_1 = (possible_victor_1 != DATA_EMPTY)
+        cross_victory_2 = (possible_victor_2 != DATA_EMPTY)
         for yz in range(1,BOARD_DIMENSION):
                 cross_victory_1 = cross_victory_1 and (data[coords_to_index(x,yz,yz)]==possible_victor_1)
                 cross_victory_2 = cross_victory_2 and (data[coords_to_index(x,yz,MAX_COORDINATE-yz)]==possible_victor_2)
         if cross_victory_1:
             return (True,(x,0,0),(x,MAX_COORDINATE,MAX_COORDINATE))
         if cross_victory_2:
-            return (True,(x,MAX_COORDINATE,0),(x,MAX_COORDINATE,0))
+            return (True,(x,0,MAX_COORDINATE),(x,MAX_COORDINATE,0))
                 
     #All Y-slice cross lines
     for y in range(0,BOARD_DIMENSION):
-        cross_victory_1 = True
-        cross_victory_2 = True
         possible_victor_1 = data[coords_to_index(0,y,0)]
         possible_victor_2 = data[coords_to_index(MAX_COORDINATE,y,0)]
-        if possible_victor_1==DATA_EMPTY or possible_victor_2==DATA_EMPTY:
-            continue
+        cross_victory_1 = (possible_victor_1 != DATA_EMPTY)
+        cross_victory_2 = (possible_victor_2 != DATA_EMPTY)
         for xz in range(1,BOARD_DIMENSION):
                 cross_victory_1 = cross_victory_1 and (data[coords_to_index(xz,y,xz)]==possible_victor_1)
                 cross_victory_2 = cross_victory_2 and (data[coords_to_index(MAX_COORDINATE-xz,y,xz)]==possible_victor_2)
         if cross_victory_1:
-            return (True,(0,0,z),(MAX_COORDINATE,MAX_COORDINATE,z))
+            return (True,(0,y,0),(MAX_COORDINATE,y,MAX_COORDINATE))
         if cross_victory_2:
-            return (True,(MAX_COORDINATE,0,z),(0,MAX_COORDINATE,z))
+            return (True,(MAX_COORDINATE,y,0),(0,y,MAX_COORDINATE))
     #The 4 corner diagonals
     corner_1_victory = True
     corner_1_mark = data[coords_to_index(0,0,0)]
@@ -196,11 +190,11 @@ def game_over(data):
     if corner_1_victory and (corner_1_mark != DATA_EMPTY):
         return (True,(0,0,0),(MAX_COORDINATE,MAX_COORDINATE,MAX_COORDINATE))
     if corner_2_victory and (corner_2_mark != DATA_EMPTY):
-        return (True,(MAX_COORDINATE,0,0),(MAX_COORDINATE,MAX_COORDINATE,MAX_COORDINATE))
+        return (True,(MAX_COORDINATE,0,0),(0,MAX_COORDINATE,MAX_COORDINATE))
     if corner_3_victory and (corner_3_mark != DATA_EMPTY):
         return (True,(0,MAX_COORDINATE,0),(MAX_COORDINATE,0,MAX_COORDINATE))
     if corner_4_victory and (corner_4_mark != DATA_EMPTY):
-        return (True,(MAX_COORDINATE,MAX_COORDINATE,0),(0,0,MAX_COORDINATE))
+        return (True,(0,0,MAX_COORDINATE),(MAX_COORDINATE,MAX_COORDINATE,0))
     #Game is not over
     return (False,(0,0,0),(0,0,0))
                 
@@ -272,7 +266,7 @@ for x in range(0,BOARD_DIMENSION):
             board_models.append( make_dot(pos=(x,y,z)) )
 
 
-
+make_victory((MAX_COORDINATE,0,0),(MAX_COORDINATE,0,0))
 #The main loop
 reply = send_worker_message("-1 -1 -1")
 board_data = list(reply)
