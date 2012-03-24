@@ -16,9 +16,15 @@ debug: all
 worker: $(SRC1)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
+.PHONY: pdf
+pdf: report.pdf;
+
+report.pdf: report.tex
+	latexmk -pdf report.tex
+
 .PHONY: clean veryclean
 clean:
-	-rm *.o
+	-rm *.o *.aux *.aux.bak *.log
 
 veryclean:
 	-rm $(PROGS)
