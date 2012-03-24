@@ -71,7 +71,8 @@ before making a move. However, the state space is in fact exceedingly large. Con
 possible states we have $3^{64}$, but many of these (far more than half) are illegal or unreachable.
 A mathematical paper by Oren Patashnik$^{[1]}$ points out that after 18 moves (under perfect play by player 1)
 the game will be over or in a state where every move is forced. With this in mind we can 
-consider a more reasonable upper bound on the states we must examine:\\ 64 choose 18 = 3601688791018080.\\
+consider a more reasonable upper bound on the states we must examine:
+ \[\binom{64}{18} = 3601688791018080\]
 If we assume we can examine 1 state per clock cycle (a completely and utterly unreasonable assumption) it would
 still take 250 hours to search this reduced state space on a 4GHz CPU. Minimax with $\alpha$-$\beta$ pruning
 and other clever tricks could significantly reduce this figure; however it remains obvious that
@@ -79,8 +80,7 @@ searching to depth 18 for every move is unachievable. Thus we set a depth cut-of
 searching and perform a heuristic state evaluation.\\\\
 Due to this inevitable cut-off it also became impossible to determine if either
 player has a winning strategy. It is however interesting to note that (in the paper
-mentioned above) Patashnik determined that the first player does in fact have 
-a winning strategy. 
+mentioned above) Patashnik determined that the first player can always win with perfect play. 
 \pagebreak
 
 \subsection*{\emph { \textmd{4. Heuristics and Cut-offs}}}
@@ -120,7 +120,7 @@ Total Time Taken (Seconds):\\\\
 \end{tabular}\\\\
 The benefits of $\alpha$-$\beta$ pruning are obvious and indisputable, often cutting
 the number of nodes and total time by a factor of over 100!\\
-The benefits of our heuristic function are however less obvious. We notice a that
+However the benefits of our heuristic function are less obvious. We notice that
 a great deal less leaf nodes are examined; but the improvement in running time is
 negligible. This is due to the fact that we must constantly evaluate states for their
 potential value; taking precious CPU time.
