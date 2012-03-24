@@ -356,7 +356,8 @@ _move pick_next(state s, char player, int depth) {
         if (!possible_moves.valid[i]) {
             continue;
         }
-        score = minimax(possible_moves.result[i], next_player, INT_MIN, INT_MAX, depth);
+        // depth-1 since we are doing the top ply
+        score = minimax(possible_moves.result[i], next_player, INT_MIN, INT_MAX, depth-1);
         if (score > best_score) {
             best_score = score;
             best_move = i;
