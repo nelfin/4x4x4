@@ -1,6 +1,6 @@
 CC := gcc
 
-CFLAGS  := -Wall -Iinclude -pg
+CFLAGS  := -Wall -Iinclude
 LDFLAGS :=
 
 PROGS := worker
