@@ -26,10 +26,11 @@ DATA_CROSS='x'
 DATA_NOUGHT='o'
 
 #Drawing constants
-GRID_COLOR = color.white
+GRID_COLOR    = color.white
 NOUGHTS_COLOR = color.green
 CROSSES_COLOR = color.red
-DOT_COLOR = color.white
+DOT_COLOR     = color.white
+LABEL_COLOR   = color.white
 VICTORY_COLOR = color.yellow
 
 COMPUTER_GAME_OVER_TEXT = "Computer (X) won!"
@@ -48,8 +49,12 @@ CENTRE_OFFSET = vector(GAP_SIZE/2.0,GAP_SIZE/2.0,GAP_SIZE/2.0) - vector(BOARD_SI
 board_data = list()
 board_models = list()
 
-grid_visible = True
-dots_visible = False
+labels  = frame()
+grid    = frame()
+squares = frame()
+grid.visible    = True
+labels.visible  = False
+squares.visible = False
 
 #Sends the worker a message and waits for it's reply
 def send_worker_message(message):
@@ -65,8 +70,11 @@ def make_nought(pos, color=NOUGHTS_COLOR, radius=NOUGHTS_RADIUS):
 #Draw a dot for an empty space.
 def make_dot(pos, color=DOT_COLOR, radius=NOUGHTS_RADIUS/10.0):
     dot = make_nought(pos,color,radius)
-    dot.visible = dots_visible
+    dot.visible = squares.visible
     return dot
+
+def make_label(pos, color=LABEL_COLOR):
+	label(frame=labels, pos=vector(pos)*GAP_SIZE+CENTRE_OFFSET,text=str(pos),box=False,height=7,opacity= 0.1,color=color)
 
 #Draw an X for the crosses player.
 def make_cross(pos, color=CROSSES_COLOR, size=CROSSES_SIZE):
@@ -240,7 +248,6 @@ def place((x, y, z), mark):
     board_data[coords_to_index(x, y, z)] = mark
     
 #Draw the grid
-grid = frame()
 (lambda spacing:(
 [box(frame=grid,pos=(x,y,0), size=(THICKNESS,THICKNESS,BOARD_SIZE), color=GRID_COLOR) for x in spacing for y in spacing],
 [box(frame=grid,pos=(x,0,z), size=(THICKNESS,BOARD_SIZE,THICKNESS), color=GRID_COLOR) for x in spacing for z in spacing],
@@ -249,12 +256,9 @@ linspace(-BOARD_SIZE/2.0,BOARD_SIZE/2.0,BOARD_DIMENSION+1))
 #Draw the axis
 make_axis()
 #Also set up the squares format that we can switch to later
-squares = frame()
 for level in range(0,BOARD_DIMENSION):
     y = level * GAP_SIZE
     curve(frame=squares,pos=[(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0),(BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0),(BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,BOARD_SIZE/2.0),(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,BOARD_SIZE/2.0),(-BOARD_SIZE/2.0,y-BOARD_SIZE/2.0,-BOARD_SIZE/2.0)])
-
-squares.visible = dots_visible; #only showing the squares with the dots
 
 
 
@@ -264,9 +268,9 @@ for x in range(0,BOARD_DIMENSION):
         for z in range(0,BOARD_DIMENSION):
             board_data.append(DATA_EMPTY)
             board_models.append( make_dot(pos=(x,y,z)) )
+            make_label(pos=(x,y,z))
 
 
-make_victory((MAX_COORDINATE,0,0),(MAX_COORDINATE,0,0))
 #The main loop
 reply = send_worker_message("-1 -1 -1")
 board_data = list(reply)
@@ -277,17 +281,17 @@ while True:
         if scene.kb.keys:
             s = scene.kb.getkey()
             if s=='g':
-                grid_visible = not grid_visible
-                dots_visible = not dots_visible
-        
-                grid.visible = grid_visible
-                squares.visible = dots_visible
+                grid.visible = not grid.visible
+                squares.visible = not squares.visible
                 update_models(board_data);
             if s == 's':
             	if scene.stereo == 'redcyan':
             		scene.stereo = 'nostereo'
             	else:
             		scene.stereo = 'redcyan'
+            if cmd.startswith("l"):
+                labels.visible = not labels.visible
+                update_models(board_data);
             if s == 'q':
                 sys.exit()
 
@@ -297,6 +301,21 @@ while True:
         
         while True:
             cmd = raw_input("[visual] Enter space-separated coordinates>>> ")
+            if cmd.startswith("g"):
+                grid.visible = not grid.visible
+                squares.visible = not squares.visible
+                update_models(board_data);
+                update_models(board_data);
+                continue
+            if cmd.startswith("l"):
+                labels.visible = not labels.visible
+                continue
+            if cmd.startswith("s"):
+            	if scene.stereo == 'redcyan':
+            		scene.stereo = 'nostereo'
+            	else:
+            		scene.stereo = 'redcyan'
+            	continue
             if cmd.startswith("q"):
                 sys.exit()
             try:
