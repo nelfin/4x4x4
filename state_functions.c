@@ -2,11 +2,15 @@
 
 // globals
 char computer = CROSSES; //CROSSES is trying to maximize. CROSSES plays first
+
 state initial_state = {
     {{{EMPTY}}},
+    {{-1,-1,-1}},
     {-1},
     0
 };
+
+
 const unsigned char display[3] = {' ', 'O', 'X'};
 
 void clear_state(state *s) {
@@ -89,6 +93,7 @@ void replicate(state *s, state *dest) {
     dest->move_number = s->move_number;
     memcpy(&(dest->moves), s->moves, SQUARES*sizeof(int));
     memcpy(&(dest->board), s->board, SQUARES*sizeof(unsigned char));
+    memcpy(&(dest->sparse_board), s->sparse_board, SQUARES*sizeof(sparse_array_entry));
 }
 
 // Check victory conditions of a state. returns:
@@ -224,6 +229,11 @@ retval get_successors(state s, char player) {
                     result[i].most_recent_x = x;
                     result[i].most_recent_y = y;
                     result[i].most_recent_z = z;
+                    //The sparse array is a short list of the coordinates that are non-empty
+                    result[i].sparse_board[s.move_number].x = x;
+                    result[i].sparse_board[s.move_number].y = y;
+                    result[i].sparse_board[s.move_number].z = z;
+                    
                     result[i].moves[result[i].move_number] = i;
                     result[i].move_number++;
                     ret.valid[i] = true;
@@ -260,9 +270,26 @@ int evaluate(state s, char player) {
 //
 // WONTFIX: make victory INF (MAX_INT) -- Andrew
 int score_state(state s, position_values map) {
+    //fprintf(stderr,"[worker] sparse array size: %i first entry: %i %i %i",s.move_number,s.sparse_board[0].x,s.sparse_board[0].y,s.sparse_board[0].z);
+    int i;
     int x,y,z;
     int score=0;
-    for(x=0; x<BOARD_DIMENSION; x++){
+    for(i=0; i<s.move_number;i++){
+        x=s.sparse_board[i].x;
+        y=s.sparse_board[i].y;
+        z=s.sparse_board[i].z;
+        int sign = 0;
+        if (s.board[x][y][z] == computer) {
+            sign = 1;
+        } else if(s.board[x][y][z] != EMPTY) {
+            sign = -1;
+        }
+        int this_position_value = map[x][y][z] * sign;
+        score += this_position_value;
+    }
+    return score;
+    //Old and slow approach
+    /*for(x=0; x<BOARD_DIMENSION; x++){
         for(y=0; y<BOARD_DIMENSION; y++){
             for(z=0; z<BOARD_DIMENSION; z++){
                 int sign = 0;
@@ -276,7 +303,7 @@ int score_state(state s, position_values map) {
             }
         }
     }
-    return score;
+    return score;*/
 }
 
 //Calculates from a board whose turn is next

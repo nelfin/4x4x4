@@ -18,10 +18,18 @@
 #define WIN_SCORE MAX_STATIC_SCORE+1 //As long as this is greater than the maximum static value (304 = BOARD_DIMENSION * Number of victory lines)
 #define CROSSES_WIN 16
 #define NOUGHTS_WIN NOUGHTS
-#define DEPTH 2
+#define DEPTH 6
+
+typedef struct _sparse_array_entry {
+    int x;
+    int y;
+    int z;
+} sparse_array_entry;
 
 typedef struct _state {
     unsigned char board[SIDE][SIDE][SIDE];
+    //Sparse array is only valid up to move_number. After that there is no guarantee on what the values are
+    sparse_array_entry sparse_board[SQUARES];
     int moves[SQUARES];
     int move_number;
     int most_recent_x;
