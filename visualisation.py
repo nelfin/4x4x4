@@ -266,7 +266,6 @@ for x in range(0,BOARD_DIMENSION):
             board_models.append( make_dot(pos=(x,y,z)) )
 
 
-make_victory((MAX_COORDINATE,0,0),(MAX_COORDINATE,0,0))
 #The main loop
 reply = send_worker_message("-1 -1 -1")
 board_data = list(reply)
@@ -297,6 +296,20 @@ while True:
         
         while True:
             cmd = raw_input("[visual] Enter space-separated coordinates>>> ")
+            if cmd.startswith("g"):
+                grid_visible = not grid_visible
+                dots_visible = not dots_visible
+        
+                grid.visible = grid_visible
+                squares.visible = dots_visible
+                update_models(board_data);
+                continue
+            if cmd.startswith("s"):
+            	if scene.stereo == 'redcyan':
+            		scene.stereo = 'nostereo'
+            	else:
+            		scene.stereo = 'redcyan'
+            	continue
             if cmd.startswith("q"):
                 sys.exit()
             try:
