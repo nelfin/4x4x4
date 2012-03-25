@@ -95,8 +95,29 @@ player has a winning strategy. It is however interesting to note that (in the pa
 mentioned above) Patashnik determined that the first player can always win with perfect play. 
 
 \section{Heuristics and Cut-offs}
-briefly explain heuristics and cut off decisions
-
+By default we have set the depth cut-off to 6. This value was decided mostly 
+through experimentation; based of how long it takes the agent to make each move.
+At depth 7 it can take over a minute for the agent to play, making the game a bit unplayable.
+Furthermore, at a depth of 6 the agent is able to look ahead 3 of it's own moves,
+allowing it to examine states where it has completed a victory line where it currently
+has 1 piece. Note that the user is able to set the agent minimax depth (see \texttt{README})\\\\
+The agent uses two kinds of heuristic evaluation:
+\begin{itemize}
+\item[] A state evaluation function; used to estimate the value of a state at the
+search cut-off depth
+\item[] Heuristic ordering; a simpler value estimation to decide which states
+should be selected first during $\alpha$-$\beta$ pruning
+\end{itemize}
+The state evaluator gives a state a score between -304 and 304, based off the positions held by
+each player. Each square on the board has either 4 or 7 victory lines through it; the
+score of a state is simply the sum of scores held by the computer player (minus the sum
+of scores held by the human player). This encourages the agent to take corner and centre
+squares throughout the start of the game, opening more opportunities to find a victory state 
+(given a score of 305) later.\\\\
+Heuristic ordering places a simple restriction to first select squares worth 7
+when performing $\alpha$-$\beta$ pruning. Interestingly through testing we found
+this only to be effective to a certain depth in the minimax tree.
+%Josh^ 1 or 2 sentences explain this plz
 
 
 \section{Pure minimax vs.\ $\alpha$-$\beta$ pruning}
@@ -134,12 +155,14 @@ run at various cut-off depths:
     3 & 0.27 & 0.03 & ??? \\
     4 & 15.30 & 0.24 & ??? \\
     5 & 941.99 & 1.18 & ??? \\
-    6 & 2000+ & 17.51 & ??? \\
+    6 & 2000+ & ??? & ??? \\
     7 & hours & 116.77 & ??? \\
     \bottomrule
   \end{tabular}
   \label{tab:time}
 \end{table}
+%Andrew^ fill or remove remaining entries
+
 
 The benefits of $\alpha$-$\beta$ pruning are obvious and indisputable, often cutting
 the number of nodes and total time by a factor of over 1500.
@@ -147,6 +170,7 @@ However, the benefits of our heuristic function are less obvious. We notice that
 a great deal less leaf nodes are examined; but the improvement in running time is
 negligible. This is due to the fact that we must constantly evaluate states for their
 potential value; taking precious CPU time.
+%^Need to fix this guess
 
 \section{Reflection}
 The purpose of this project was to prepare ourselves for building an AI agent for
@@ -171,9 +195,14 @@ we will probably switch to a higher level language (e.g. Java) for the main
 project.
 
 \section{Summary}
-Bla
+Despite the fact that 4$\times$4$\times$4 tic tac toe proved to be more challenging
+than originally intended it still served great as preparation for the larger project.\\
+Given more time we might have added additional optimisation features to the agent such as
+transposition tables and perhaps better static evaluation.
+
 
 \bibliographystyle{alpha}
 \bibliography{ai}
 %Qubic: 4 × 4 × 4 Tic-Tac-Toe Oren Patashnik Mathematics Magazine Vol. 53, No. 4 (Sep., 1980), pp. 202-216
+%^Andrew please help with bib
 \end{document}
