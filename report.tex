@@ -10,8 +10,12 @@
 \usepackage{titlesec}
 \usepackage{float}
 \usepackage{natbib}
+\usepackage[english]{babel}
+\usepackage[autolanguage]{numprint}
 %\restylefloat{table}
 \usepackage[tableposition=top]{caption}
+% Macros
+\newcommand{\np}{\numprint}
 % Options
 \marginsize{2.5cm}{1.5cm}{1cm}{1cm}
 \setlength{\columnsep}{18.0pt}
@@ -134,13 +138,13 @@ run at various cut-off depths:
   \caption{Total leaf nodes examined}
   \begin{tabular}{lrrr}
     \toprule
-    Depth & Minimax & $\alpha$-$\beta$ & $\alpha$-$\beta$ + Heuristics \\
+    Depth & {Minimax} & $\alpha$-$\beta$ & $\alpha$-$\beta$ + Heuristics \\
     \midrule
-    3 & 249984 & 8026 & ??? \\
-    4 & 15249024 & 256936 & ??? \\
-    5 & 914941440 & 622961 & ??? \\
-    6 & 53981544960 & 16771844 & ??? \\
-    7 & 3130929607680 & 62306364 & ??? \\
+    3 & \np{249984} & \np{8026} & ??? \\
+    4 & \np{15249024} & \np{256936} & ??? \\
+    5 & \np{914941440} & \np{622961} & ??? \\
+    6 & \np{5.398e10} & \np{16771844} & ??? \\
+    7 & \np{3.131e11} & \np{62306364} & ??? \\
     \bottomrule
   \end{tabular}
   \label{tab:leafnodes}
@@ -148,15 +152,15 @@ run at various cut-off depths:
 \begin{table}[h]
   \centering
   \caption{Total time taken (seconds)}
-  \begin{tabular}{lccc}
+  \begin{tabular}{lrrr}
     \toprule
     Depth & Minimax & $\alpha$-$\beta$ & $\alpha$-$\beta$ + Heuristics \\
     \midrule
-    3 & 0.27 & 0.03 & ??? \\
-    4 & 15.30 & 0.24 & ??? \\
-    5 & 941.99 & 1.18 & ??? \\
-    6 & 2000+ & 18.11 & ??? \\
-    7 & hours & 116.77 & ??? \\
+    3 & \np{0.27} & \np{0.03} & ??? \\
+    4 & \np{15.30} & \np{0.24} & ??? \\
+    5 & \np{941.99} & \np{1.18} & ??? \\
+    6 & 2000+ & \np{18.11} & ??? \\
+    7 & hours & \np{116.77} & ??? \\
     \bottomrule
   \end{tabular}
   \label{tab:time}
