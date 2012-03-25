@@ -50,15 +50,15 @@ us to use the program \texttt{gprof} to analyse running time and total number of
 \subsection{Overview of modules}
 \texttt{visualisation.py:}
 \begin{itemize}
-\item The python module which takes user input and displays the game board using VPython
+\item The python module which takes user input (to play against the computer) and displays the game board using VPython
 \item This is the main program, it creates a sub-process (\texttt{worker.c}) which returns
 board states to display
-\item Contains several visualisation options: press 'g' to switch views and 's' to enable
-red-cyan stereoscopic 3D.
+\item Contains several visualisation options such as labels on each square and even
+red-cyan stereoscopic 3D. See \texttt{README} for details.
 \end{itemize}
 \begin{figure}[h]
   \begin{center}
-    \includegraphics[width=2in]{vis.jpg}
+    \includegraphics[width=2.5in]{vis.jpg}
   \end{center}
   \caption{Example of a game visualisation}
   \label{fig:vis}
@@ -85,7 +85,7 @@ the game will be over or in a state where every move is forced. With this in min
 consider a more reasonable upper bound on the states we must examine:
  \[\binom{64}{18} = 3601688791018080\]
 If we assume we can examine 1 state per clock cycle (a completely and utterly unreasonable assumption) it would
-still take 250 hours to search this reduced state space on a 4GHz CPU. Minimax with $\alpha$-$\beta$ pruning
+still take over 250 hours to search this reduced state space on a 4GHz CPU. Minimax with $\alpha$-$\beta$ pruning
 and other clever tricks could significantly reduce this figure; however it remains obvious that
 searching to depth 18 for every move is unachievable. Thus we set a depth cut-off where we stop
 searching and perform a heuristic state evaluation.
@@ -134,8 +134,8 @@ run at various cut-off depths:
     3 & 0.27 & 0.03 & ??? \\
     4 & 15.30 & 0.24 & ??? \\
     5 & 941.99 & 1.18 & ??? \\
-    6 & ??? & ??? & ??? \\
-    7 & ??? & 116.77 & ??? \\
+    6 & 2000+ & 17.51 & ??? \\
+    7 & hours & 116.77 & ??? \\
     \bottomrule
   \end{tabular}
   \label{tab:time}
@@ -148,10 +148,32 @@ a great deal less leaf nodes are examined; but the improvement in running time i
 negligible. This is due to the fact that we must constantly evaluate states for their
 potential value; taking precious CPU time.
 
-\section{Summary and Reflection}
-A Summary. Also discuss how this will prepare us for reversi (language choice,
-teamwork, gitHub)
+\section{Reflection}
+The purpose of this project was to prepare ourselves for building an AI agent for
+a much more complex game; Othello. As such we used this project to evaluate various
+technologies and prepare for the challenges we will face in the larger project.\\
+The code hosting service github was invaluable throughout this warm-up
+project. Now that we have spent the time getting familiar with git
+we can make better use of github's analysis tools (such as
+the issue tracker and network graphs) in the upcoming Othello project.\\
+This project was also useful to evaluate our choice of language; the combination
+of C and Python. While this choice was effective for tic tac toe (due to the
+need for simple 3D visualisation) we have encountered many drawbacks that 
+could prove overwhelming in the main project:
+\begin{itemize}
+\item No fully featured IDE
+\item Lack of local libraries (in particular for hash tables)
+\item No high-level data structures
+\item Difficult to debug and test
+\end{itemize}
+Furthermore the game Othello has no need for 3D visualisation. Because of this
+we will probably switch to a higher level language (e.g. Java) for the main
+project.
+
+\section{Summary}
+Bla
 
 \bibliographystyle{alpha}
 \bibliography{ai}
+%Qubic: 4 × 4 × 4 Tic-Tac-Toe Oren Patashnik Mathematics Magazine Vol. 53, No. 4 (Sep., 1980), pp. 202-216
 \end{document}
