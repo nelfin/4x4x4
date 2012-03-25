@@ -18,7 +18,7 @@
 #define WIN_SCORE MAX_STATIC_SCORE+1 //As long as this is greater than the maximum static value (304 = BOARD_DIMENSION * Number of victory lines)
 #define CROSSES_WIN 16
 #define NOUGHTS_WIN NOUGHTS
-#define DEFAULT_DEPTH 4
+#define DEFAULT_DEPTH 6
 #define HEURISTIC_ORDERING_DEPTH 2
 
 typedef struct _sparse_array_entry {
@@ -56,7 +56,7 @@ typedef struct _retval {
 
 
 
-// prototypes
+// State functions
 void prettyprint_state (state s);
 void prettyprint_position_values (position_values s);
 void replicate(state *s, state *dest);
@@ -75,11 +75,6 @@ int compare_states_max_player (const void *a, const void *b);
 int compare_states_min_player (const void *a, const void *b);
 //For the score_state function, filled in worker.c
 position_values map;
-
-
-
-void pick_demo();
-void succ_demo();
 
 // State I/O
 void send_visual_message(char message[SQUARES]);

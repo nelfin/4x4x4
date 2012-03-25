@@ -17,7 +17,6 @@ def shutdown():
     print "[visual] shutting down"
     worker.kill()
     os.kill(os.getpid(), signal.SIGKILL)
-#atexit.register(shutdown)
 
 FPS = 60
 
