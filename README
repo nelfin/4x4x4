@@ -4,9 +4,15 @@ By Tim Cosgrove, Joshua Nelson and Andrew Haigh.
 
 To start the game run
 
+   make
+   
+to compile the C modules and then
+
    python visualisation.py
    
-or just exectute visualisation.py directly.
+(or execute visualisation.py directly)
+Note that you must have the Visual Python module installed (this module is
+installed on lab machines and on partch)
 
 The game will then ask you what depth to run minimax, defaulting to 6.
 The game will then start. Make moves by entering x, y and z coordinates into
