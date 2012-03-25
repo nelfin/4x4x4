@@ -10,6 +10,7 @@ state initial_state = {
     0
 };
 
+
 const unsigned char display[3] = {' ', 'O', 'X'};
 
 void clear_state(state *s) {
@@ -17,7 +18,6 @@ void clear_state(state *s) {
     s->most_recent_x = 0;
     s->most_recent_y = 0;
     s->most_recent_z = 0;
-    s->heuristic_value = 0;
     memset(&(s->board), EMPTY, SQUARES*sizeof(unsigned char));
 }
 
@@ -205,6 +205,7 @@ char get_any_victory(state s) {
     }
     return EMPTY;
 }
+
 // get valid succsessors of a state
 retval get_successors(state s, char player) {
     state *result = (state *) malloc(sizeof(state)*SQUARES);
@@ -232,14 +233,9 @@ retval get_successors(state s, char player) {
                     result[i].sparse_board[s.move_number].x = x;
                     result[i].sparse_board[s.move_number].y = y;
                     result[i].sparse_board[s.move_number].z = z;
-
+                    
                     result[i].moves[result[i].move_number] = i;
                     result[i].move_number++;
-                    
-                    if(s.move_number < HEURISTIC_ORDERING_DEPTH) {
-                        result[i].heuristic_value = score_state(result[i],map);
-                    }
-                    
                     ret.valid[i] = true;
                     //if (victory(result[i-1])) 
                     //  {handle victory conditions, or report error state}
@@ -248,43 +244,10 @@ retval get_successors(state s, char player) {
             }
         }
     }
-    if(s.move_number < HEURISTIC_ORDERING_DEPTH) {
-        if(player == computer){
-            qsort(result,SQUARES,sizeof(state),compare_states_max_player);
-        }else{
-            qsort(result,SQUARES,sizeof(state),compare_states_min_player);
-        }
-    }
-    
-    
     ret.result = result;
     ret.numsucc = i;
 
     return ret;
-}
-
-
-int compare_states_max_player (const void *a, const void *b) {
-    const state *state_a = (const state *) a;
-    const state *state_b = (const state *) b;
-    if(state_a->heuristic_value > state_b->heuristic_value) {
-        return -1;
-    }
-    if(state_a->heuristic_value < state_b->heuristic_value) {
-        return 1;
-    }
-    return 0;
-}
-int compare_states_min_player (const void *a, const void *b) {
-    const state *state_a = (const state *) a;
-    const state *state_b = (const state *) b;
-    if(state_a->heuristic_value > state_b->heuristic_value) {
-        return 1;
-    }
-    if(state_a->heuristic_value < state_b->heuristic_value) {
-        return -1;
-    }
-    return 0;
 }
 
 
@@ -302,6 +265,7 @@ int evaluate(state s, char player) {
 // Noughts^WComputer winning = positive score, vice versa
 // Score is on a scale -304 to 304 (-4*76 to 4*76)
 //
+// TODO: normalize this score so it can be used in place of a victory
 // evaluation if there is no victor
 //
 // WONTFIX: make victory INF (MAX_INT) -- Andrew
@@ -444,11 +408,11 @@ int minimax(state s, char player, int alpha, int beta, int depth) {
 
     next_player = (player == CROSSES) ? NOUGHTS : CROSSES;
 
-    if (depth <= 0 || victory(s) != EMPTY) {
+    if (depth <= 0 || victory(s) != EMPTY) { //TODO this should only need to check based on the latest move
         return evaluate(s, player);
     }
 
-    moves = get_successors(s, player);
+    moves = get_successors(s, player); //next_player?
 
     if (player == computer) {
         for (i = 0; i < SQUARES; i++) {

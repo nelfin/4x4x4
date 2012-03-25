@@ -18,8 +18,7 @@
 #define WIN_SCORE MAX_STATIC_SCORE+1 //As long as this is greater than the maximum static value (304 = BOARD_DIMENSION * Number of victory lines)
 #define CROSSES_WIN 16
 #define NOUGHTS_WIN NOUGHTS
-#define DEPTH 5
-#define HEURISTIC_ORDERING_DEPTH 2
+#define DEPTH 6
 
 typedef struct _sparse_array_entry {
     int x;
@@ -36,8 +35,6 @@ typedef struct _state {
     int most_recent_x;
     int most_recent_y;
     int most_recent_z;
-    //Heuristic value is only filled up to HEURISTIC_ORDERING_DEPTH
-    int heuristic_value;
 } state;
 
 typedef struct {
@@ -71,11 +68,8 @@ int evaluate(state s, char player);
 void fill_position_values(position_values scoremap);
 char get_turn(state s);
 int score_state(state s, position_values map);
-int compare_states_max_player (const void *a, const void *b);
-int compare_states_min_player (const void *a, const void *b);
 //For the score_state function, filled in worker.c
 position_values map;
-
 
 
 void pick_demo();
