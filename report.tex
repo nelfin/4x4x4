@@ -46,7 +46,9 @@ The core of the agent is implemented with a combination of minimax and $\alpha$-
 
 Board states are stored simply as a 3 dimensional array of chars; but this data is passed
 through the program as a struct including extra information such as a heuristic evaluation
-of the state. Once the minimax program reaches a fixed cut-off depth we select a state based on
+of the state, a move number indicating how many positions have been filled,
+and a short list of the array coordinates that are occupied (for fast iteration over the array).
+Once the minimax program reaches a fixed cut-off depth we select a state based on
 this heuristic. For testing purposes all code is compiled with the -g flag. This allows
 us to use the program \texttt{gprof} to analyse running time and total number of function calls
 (this is used to optimise and evaluate the effectiveness of $\alpha$-$\beta$ pruning).
@@ -119,9 +121,35 @@ of scores held by the human player). This encourages the agent to take corner an
 squares throughout the start of the game, opening more opportunities to find a victory state 
 (given a score of 305) later.\\\\
 Heuristic ordering places a simple restriction to first select squares worth 7
-when performing $\alpha$-$\beta$ pruning. Interestingly through testing we found
-this only to be effective to a certain depth in the minimax tree.
-%Josh^ 1 or 2 sentences explain this plz
+when performing $\alpha$-$\beta$ pruning, and consider opponent moves where they
+might score 7 first. A cutoff depth for the sorting procedure is specified,
+and after this, sorting by heuristic value is no longer performed on the states. This choice was made
+because the sorting is most effective early in the game tree, as it has the potential to enable $\alpha$-$\beta$ pruning
+to truncate large branches of the game tree. Later sorting decreases the impact of the $\alpha$-$\beta$ pruning. Later sorting
+also costs more, as there are more nodes to evaluate, so there is a tradeoff involved when deciding the cutoff value for the
+heuristic ordering.
+
+The agent was profiled during a depth 5 search, with varying depth cutoffs for sorting. The times, and the amount of leaf nodes evaluated, were recorded.
+The results show that a depth 2 heuristic cutoff is the most effective in terms of time, but the amount of leaf nodes evaluated is consistently
+reduced as we increase the heuristic cutoff.
+\begin{table}[H]
+  \centering
+  \caption{Heuristic cutoff performace}
+  \begin{tabular}{lrrr}
+    \toprule
+    Heuristic Cutoff & {Time (s)} & Leaf nodes evaluated \\
+    \midrule
+    0 & \np{1.05} & \np{622961}\\
+    1 & \np{0.94} & \np{622961}\\
+    2 & \np{0.86} & \np{618553}\\
+    3 & \np{1.01} & \np{582091}\\
+    4 & \np{1.25} & \np{517952} \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:leafnodes}
+\end{table}
+
+
 
 
 \section{Pure minimax vs.\ $\alpha$-$\beta$ pruning}
