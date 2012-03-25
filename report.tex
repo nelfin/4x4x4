@@ -124,8 +124,8 @@ Heuristic ordering places a simple restriction to first select squares worth 7
 when performing $\alpha$-$\beta$ pruning, and consider opponent moves where they
 might score 7 first. A cutoff depth for the sorting procedure is specified,
 and after this, sorting by heuristic value is no longer performed on the states. This choice was made
-because the sorting is most effective early in the game tree, as it has the potential to enable $\alpha$-$\beta$ pruning
-to truncate large branches of the game tree. Later sorting decreases the impact of the $\alpha$-$\beta$ pruning. Later sorting
+because the sorting is most effective early in the search; it has the potential to enable $\alpha$-$\beta$ pruning
+to truncate large branches of the game tree. Later sorting has a decreased impact on the $\alpha$-$\beta$ pruning. Later sorting
 also costs more, as there are more nodes to evaluate, so there is a tradeoff involved when deciding the cutoff value for the
 heuristic ordering.
 
@@ -184,11 +184,11 @@ run at various cut-off depths:
     \toprule
     Depth & Minimax & $\alpha$-$\beta$ & $\alpha$-$\beta$ + Heuristics \\
     \midrule
-    3 & \np{0.27} & \np{0.03} & \np{0.01} \\
-    4 & \np{15.30} & \np{0.24} & \np{0.14} \\
-    5 & \np{941.99} & \np{1.18} & \np{0.90} \\
-    6 & 2000+ & \np{18.11} & \np{9.31} \\
-    7 & hours & \np{116.77} & \np{79.97} \\
+    3 & \np{0.27} & \np{0.01} & \np{0.01} \\
+    4 & \np{15.30} & \np{0.16} & \np{0.14} \\
+    5 & \np{941.99} & \np{0.97} & \np{0.90} \\
+    6 & 2000+ & \np{9.49} & \np{9.31} \\
+    7 & hours & \np{83.44} & \np{79.97} \\
     \bottomrule
   \end{tabular}
   \label{tab:time}
