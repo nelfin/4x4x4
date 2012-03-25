@@ -117,9 +117,9 @@ should be selected first during $\alpha$-$\beta$ pruning
 The state evaluator gives a state a score between -304 and 304, based off the positions held by
 each player. Each square on the board has either 4 or 7 victory lines through it; the
 score of a state is simply the sum of scores held by the computer player (minus the sum
-of scores held by the human player). This encourages the agent to take corner and centre
+of scores held by the human player) \cite{Bogenschutz2010}. This encourages the agent to take corner and centre
 squares throughout the start of the game, opening more opportunities to find a victory state 
-(given a score of 305) later.\\\\
+(given a score of 305) later.\\
 Heuristic ordering places a simple restriction to first select squares worth 7
 when performing $\alpha$-$\beta$ pruning, and consider opponent moves where they
 might score 7 first. A cutoff depth for the sorting procedure is specified,
@@ -127,8 +127,7 @@ and after this, sorting by heuristic value is no longer performed on the states.
 because the sorting is most effective early in the search; it has the potential to enable $\alpha$-$\beta$ pruning
 to truncate large branches of the game tree. Later sorting has a decreased impact on the $\alpha$-$\beta$ pruning. Later sorting
 also costs more, as there are more nodes to evaluate, so there is a tradeoff involved when deciding the cutoff value for the
-heuristic ordering.
-
+heuristic ordering.\\
 The agent was profiled during a depth 5 search, with varying depth cutoffs for sorting. The times, and the amount of leaf nodes evaluated, were recorded.
 The results show that a depth 2 heuristic cutoff is the most effective in terms of time, but the amount of leaf nodes evaluated is consistently
 reduced as we increase the heuristic cutoff.
@@ -177,6 +176,7 @@ run at various cut-off depths:
   \end{tabular}
   \label{tab:leafnodes}
 \end{table}
+\columnbreak
 \begin{table}[h]
   \centering
   \caption{Total time taken (seconds)}
@@ -226,15 +226,7 @@ Furthermore the game Othello has no need for 3D visualisation. Because of this
 we will probably switch to a higher level language (e.g. Java) for the main
 project.
 
-\section{Summary}
-Despite the fact that 4$\times$4$\times$4 tic tac toe proved to be more challenging
-than originally intended it still served great as preparation for the larger project.\\
-Given more time we might have added additional optimisation features to the agent such as
-transposition tables and perhaps better static evaluation.
-
 
 \bibliographystyle{alpha}
 \bibliography{ai}
-%Qubic: 4 × 4 × 4 Tic-Tac-Toe Oren Patashnik Mathematics Magazine Vol. 53, No. 4 (Sep., 1980), pp. 202-216
-%^Andrew please help with bib
 \end{document}
