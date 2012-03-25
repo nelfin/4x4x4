@@ -1,0 +1,26 @@
+4x4x4 Tic Tac Toe Game README
+
+By Tim Cosgrove, Joshua Nelson and Andrew Haigh.
+
+To start the game run
+
+   make
+   
+to compile the C modules and then
+
+   python visualisation.py
+   
+(or execute visualisation.py directly)
+Note that you must have the Visual Python module installed (this module is
+installed on lab machines and on partch)
+
+The game will then ask you what depth to run minimax, defaulting to 6.
+The game will then start. Make moves by entering x, y and z coordinates into
+the terminal (all between 0 and 3 inclusive).
+
+The python module has several visualisation options that can be entered at the "Enter space-separated coordinates" input:
+
+Enter 'g' to enable or disable the grid view
+Enter 'l' to enable or disable coordinate labels for each square
+Enter 's' to enable or disable red-cyan stereoscopic 3D
+Enter 'q' to quit the game

@@ -24,7 +24,7 @@ report.pdf: report.tex
 
 .PHONY: clean veryclean
 clean:
-	-rm *.o *.aux *.aux.bak *.log
+	-rm *.o *.aux *.aux.bak *.log *.bbl *.blg
 
 veryclean:
 	-rm $(PROGS)
