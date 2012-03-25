@@ -7,8 +7,18 @@ import atexit
 import os
 import signal
 
+#Get command line options
+options = ""
+if not (len(sys.argv) == 2 or (len(sys.argv) == 1)):
+	print len(sys.argv)
+	print "Usage: visualisation.py DEPTH"
+	sys.exit()
+else:
+	if (len(sys.argv)== 2):
+		options = "-d " + sys.argv[1]
+
 #Start the worker
-worker = subprocess.Popen(['./worker'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+worker = subprocess.Popen(['./worker',options],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 
 from visual import *
 @atexit.register
