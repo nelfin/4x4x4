@@ -327,7 +327,6 @@ while True:
     
         #Input loop
         reply = send_worker_message(" ".join(map(str, [x, y, z])))
-        print "[visual] read board state:",reply," from worker\n"
         board_data = list(reply)
         update_models(board_data)
         check_game_over(COMPUTER_GAME_OVER_TEXT)
