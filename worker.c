@@ -35,7 +35,7 @@ void parse_args(int argc, char *argv[]) {
     }
 
     if (depth < 0 || depth > SQUARES) {
-        fprintf(stderr, "warning: invalid value for depth, using %d\n", DEFAULT_DEPTH);
+        fprintf(stderr, "[worker] warning: invalid value for depth, using %d\n", DEFAULT_DEPTH);
         depth = DEFAULT_DEPTH;
     }
 

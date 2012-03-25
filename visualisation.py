@@ -7,18 +7,22 @@ import atexit
 import os
 import signal
 
-#Get command line options
-options = ""
-if not (len(sys.argv) == 2 or (len(sys.argv) == 1)):
-	print len(sys.argv)
-	print "Usage: visualisation.py DEPTH"
-	sys.exit()
-else:
-	if (len(sys.argv)== 2):
-		options = "-d " + sys.argv[1]
-
+#Get the desired depth
+depth=raw_input("[visual] Enter desired minimax depth (press enter for default) >>> ")
+argument = "";
+if not (depth == ""):
+	try:
+		depth_number = int(depth)
+		if (depth_number <= 0):
+			print "[visual] Please enter an integer greater than 0"
+			sys.exit()
+	except ValueError:
+		print "[visual] Please enter an integer value"
+		sys.exit()
+	argument = "-d "+depth
+    
 #Start the worker
-worker = subprocess.Popen(['./worker',options],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+worker = subprocess.Popen(['./worker',argument],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
 
 from visual import *
 @atexit.register
@@ -286,28 +290,7 @@ board_data = list(reply)
 update_models(board_data)
 while True:
     try:
-        #Keyboard interaction
-        if scene.kb.keys:
-            s = scene.kb.getkey()
-            if s=='g':
-                grid.visible = not grid.visible
-                squares.visible = not squares.visible
-                update_models(board_data);
-            if s == 's':
-            	if scene.stereo == 'redcyan':
-            		scene.stereo = 'nostereo'
-            	else:
-            		scene.stereo = 'redcyan'
-            if cmd.startswith("l"):
-                labels.visible = not labels.visible
-                update_models(board_data);
-            if s == 'q':
-                sys.exit()
-
-
         rate(FPS);
-        
-        
         while True:
             cmd = raw_input("[visual] Enter space-separated coordinates>>> ")
             if cmd.startswith("g"):
